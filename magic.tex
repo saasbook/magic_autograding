@@ -4,13 +4,19 @@
 
 \setcounter{tocdepth}{3}
 
+\usepackage[usenames]{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+\newcommand {\tbd}[1]{{\color{Red}\bf{TBD: #1}\normalfont}}
+
+
 %
 \begin{document}
+\renewcommand{\keywords}[1]{\par\addvspace\baselineskip\noindent\keywordname\enspace\ignorespaces#1}
 %
 \mainmatter
 
-\renewcommand{\keywords}[1]{\par\addvspace\baselineskip
-\noindent\keywordname\enspace\ignorespaces#1}
+
+
 
 \title{MAGIC: Massive Automated Grading in the Cloud}
 % a short form should be given in case it is too long for the running head
@@ -32,7 +38,6 @@
 
 \input{abstract}
 \input{background}
-\input{why}
 \input{rag}
 \input{arch}
 \input{discussion}

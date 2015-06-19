@@ -1,31 +1,79 @@
 \section{Background}
 
+Automated assessment of student programming assignments was first tried
+over fifty years ago~\cite{hollingsworth60}, and with the arrival of
+Massive Open Online Courses (MOOCs), so-called ``autograding'' is
+receiving renewed attention.  The appeal is obvious: students not only
+get immediate feedback, but can now be given multiple opportunities to
+resubmit their code to improve on their mistakes, providing the
+opportunity for mastery learning.  Over their long history, autograders
+have evolved from test-harness libraries that must be linked against
+student code to web-based systems that perform both dynamic tests and static
+analysis~\cite{douce-2005-autograding-survey}.  Autograders have also
+found use in residential classrooms, with some instructors even finding
+that frequent autograded programming assignments are a surprisingly good
+predictor of final course grades~\cite{navrat2014}.
 
-There has been lots of work in
-autograding~\cite{ihantola-2010-autograding-survey}
+We describe our experience developing and using a specific category of
+cloud-based autograder in conjunction with both a software engineering
+MOOC and the residential course on which the MOOC is based.  To
+establish our position in the landscape, our autograder is \emph{fully
+automatic}, rather than serving to increase instructor productivity
+during manual grading.  It is also \emph{test based}, relying on actual
+execution of student code under controlled conditions to determine
+correctness, in contrast to graders that rely on static analysis or on
+comparing the output of student code with a reference solution.
 
-a.	extensive past work on autograding of code. Navrat 2014 even shows that performance on frequent but short autograded programming assignments can be used to predict students' final grades in programming-related courses with surprising accuracy.
+In this section we give some brief background about the course for which
+the autograders were built and the rationale for building them in the
+first place.
 
-b.	taxonomy: fully automated vs. human assist; test-based vs. static analysis
+\subsection{Course: Engineering Software as a Service (ESaaS)}
 
-c.	about ESaaS; projects; use of Pivotal Tracker, CodeClimate, Travis for coverage
 From 2008 to 2010, how we revised course: methodologies become tools,
-allowing quantiative checking of students' work; same tools were
-ultimately repurposed to help with autograding.
+allowing quantiative checking of students' work.
+
+Trying to scale up course from steady state level of 50, so thinking
+about autograding.
 
 
+about ESaaS; projects; use of Pivotal Tracker, CodeClimate, Travis for coverage
 
-\begin{enumerate}
+initially on Coursera, then edX.  Coursera opened up an API for us. edX
+opened a simlar one later. Details of the latter in Section~\ref{sec:arch}.
 
-\item
-Very early autograders relied on linking student-submitted code with a
-test harness~\cite{hollingsworth60,algol-autograders}; among the
-problems with this approach are fragility (syntax errors in student code
-may cause autograder not to compile at all), integrity (student code can
-subvert the autograder or cause bad things to happen).
+\subsection{Why Another Autograder?}
 
-\item Output-based: a script builds and runs the student's code and
-compares it with reference output.  This technique limits the kind of
-grading that can be done---for example, should 
+Given that 17 autograding systems and over 60 papers about them were
+produced from 2006--2010 alone~\cite{ihantola-2010-autograding-survey},
+why did we choose to build our own?
 
-\end{enumerate}
+First, as the survey authors point
+out~\cite{ihantola-2010-autograding-survey}, many existing systems' code
+is not readily available or is tightly integrated to a particular Learning
+Management System (LMS).  We would need to integrate with Coursera and
+later OpenEdX, both of which were new and had not at that time embraced
+any education-technology interoperability standards such as
+LTI\footnote{\url{http://imsglobal.org/lti}}.  Unlike most previous
+systems, ours would need to work at ``cloud scale'' and respond to
+workload spikes---the initial
+offering of our MOOC attracted over 50,000 learners, and we expected
+that thousands of submissions would arrive bunched together close to the
+submission deadline.  For the same reason, our graders needed to be
+highly insulated from the LMS, so that students whose code accidentally
+or deliberately damaged the autograder could not compromise other
+information in the LMS.
+Similarly, with such a large number of international learners (less than
+25\% of MOOC learners were from the USA) with diverse hardware,
+software, and operating systems, autograding had to be ``zero
+configuration,'' requiring no installation of software on learners' own computers.
+
+Finally, it is widely acknowledged that the Ruby and Rails
+ecosystem has developed by far the richest set of tools for testing,
+code grooming, and so on.
+Indeed, this was a major reason we chose Ruby for our course,
+relying on these tools both to help the students learn software
+engineering processes and to help instructors quantify students' mastery.
+We believed we could repurpose those same tools into autograders that
+would give finer-grained feedback, could perform more detailed tests,
+and would be easier to repurpose than those built for other languages.
