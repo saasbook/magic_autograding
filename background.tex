@@ -1,4 +1,4 @@
-\section{Background}
+\section{Introduction and Background}
 
 Automated assessment of student programming assignments was first tried
 over fifty years ago~\cite{hollingsworth60}, and with the arrival of
@@ -30,10 +30,52 @@ first place.
 
 \subsection{Course: Engineering Software as a Service (ESaaS)}
 
-From 2008 to 2010, how we revised course: methodologies become tools,
-allowing quantiative checking of students' work.
+From 2008 to 2010, authors Fox and Patterson thoroughly revised
+UC~Berkeley's undergraduate software engineering
+course~\cite{crossing_the_software_chasm,agile_sw_curriculum} to bring
+it up-to-date with modern practices.  The course focuses on agile
+development with an emphasis on
+behavior-driven design (BDD)~\cite{bdd} and automated testing.  A key
+design philosophy of the course was that \emph{methodologies become
+tools:\/} rather than simply advising students to use a certain
+methodology (for example, test-first development or behavior-driven
+design), we would provide them with a best-of-breed tool to immediately
+practice that methodology.  These tools would not only enable the
+students to learn immediately by doing, but also provide quantitative
+feedback for instructors to check students' work.  Among the tools we
+use are 
+RSpec~\uf{rspec.info} for unit testing; 
+SimpleCov for C0 test coverage; 
+Cucumber~\uf{cukes.info} for behavior-driven design and integration testing; 
+Pivotal Tracker~\uf{pivotaltracker.com} for lightweight project management;
+Travis~\uf{travis-ci.org} for continuous-integration testing; 
+CodeClimate~\uf{codeclimate.com} for code-quality metrics;
+and, of course, GitHub~\uf{github.com} at the center, with which all the
+other tools communicate.  
 
-Trying to scale up course from steady state level of 50, so thinking
+We chose Ruby on Rails as the teaching vehicle because its developer
+ecosystem has by far the richest set of such tools, with a much stronger
+emphasis on high productivity, refactoring, and beautiful code than any
+other ecosystem we'd seen.
+The choice of Rails influenced our decision to make Software as a
+Service (SaaS) the learning vehicle, rather than (for example) mobile
+client apps.
+
+The new course was offered experimentally in 2009--2010 and was
+immediately successful; growing enrollment demand led 
+us to write a book around the course~\cite{esaaS} and to start thinking
+about how to offer it to more students by automating some of the
+grading.  Coincidentally, in mid-2011 our colleagues Prof.~Andrew Ng
+and Prof.~Daphne Koller at Stanford were experimenting with a MOOC
+platform which would eventually become Coursera, and invited us to try
+adapting part of our course to the MOOC 
+platform as an experiment.  With the help of some very strong teaching
+assistants, we not only created Berkeley's first MOOC, but also the
+initial versions of the autograder technology described here.  To date,
+we estimate over 1,500 engineer-hours have been invested in the
+autograders, including contributions from MOOC alumni and from
+instructors using our MOOC materials as a SPOC~\cite{moocs-spocs-TR}.
+
 about autograding.
 
 
@@ -54,7 +96,7 @@ is not readily available or is tightly integrated to a particular Learning
 Management System (LMS).  We would need to integrate with Coursera and
 later OpenEdX, both of which were new and had not at that time embraced
 any education-technology interoperability standards such as
-LTI\footnote{\url{http://imsglobal.org/lti}}.  Unlike most previous
+LTI\uf{imsglobal.org/lti}.  Unlike most previous
 systems, ours would need to work at ``cloud scale'' and respond to
 workload spikes---the initial
 offering of our MOOC attracted over 50,000 learners, and we expected
