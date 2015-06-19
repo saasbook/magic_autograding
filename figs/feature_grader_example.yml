@@ -1,0 +1,13 @@
+- &step1-1
+  FEATURE: features/filter.feature
+  pass: true
+  weight: 0.2
+  if_pass:
+  - &step1-3
+  FEATURE: features/filter.feature
+  version: 2
+  weight: 0.075
+  desc: "results = [G, PG-13] movies"
+  failures:
+  - *restrict_pg_r
+  - *all_x_selected

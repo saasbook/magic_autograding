@@ -1,8 +1,38 @@
 \section{\emph{rag}, a Ruby Autograder for ESaaS}
 
+\texttt{rag} is actually a collection of three different autograding
+``engines'' based on three open source testing
+tools:
+\begin{enumerate}
+
+\item RSpec~\footnote{\url{http://rspec.info}} is a unit-testing and
+BDD/TDD framework descended from XUnit, but which exploits Ruby's
+flexible syntax to embed a unit-testing DSL in Ruby that results in very
+readable tests.  
+
+\item Cucumber~\footnote{\url{http://cukes.info}} allows
+integration-level tests or user stories~\cite{user-stories} to be
+expressed in plain prose, using regular expressions to match each step
+of such a test to a block of code that sets up preconditions (\texttt{Given}), stimulates
+the system (\texttt{When}), or checks postconditions (\texttt{Then}) as
+appropriate; our code blocks are in Ruby, but the Cucumber framework
+itself is language-agnostic.  
+
+\item Capybara~\footnote{\url{http://jnicklas.github.io/capybara}}
+provides a Ruby-embedded DSL for interacting with Web-based
+applications.
+One can trigger actions on a web page such as filling in form fields
+or clicking a button, and use XPath~\cite{xpath} to examine the
+response page delivered by the server.
+Capybara actions can either run in the same process as the app being
+tested, or when used in conjunction with the Mechanize
+library~\footnote{\url{https://rubygems.org/gems/mechanize}; based on
+  the older Perl library of the same name.}, can trigger these actions
+against a remote application, allowing black-box testing.
+
+\end{enumerate}
 
 
-a.	Background: what's Rspec? what's Cucumber? what's Travis?
 
 
 c.	Student expderience. Submit files online, wait a bit, receive numerical score + feedback.
@@ -52,8 +82,17 @@ g.	Summary table: grader types, types of assignments they grade, and how student
 
 
 \begin{figure}
-  Cucumber code snippet here from FeatureGrader
+  \begin{minipage}{0.45\textwidth}%
+  \includegraphics[width=\textwidth]{figs/feature_grader.pdf}%
+  \end{minipage}%
+  \begin{minipage}{0.55\textwidth}%
+  \lstinputlisting{figs/feature_grader_example.yml}%
+  \end{minipage}
   \caption{\label{fig:cucumber}%
- Caption.
+FeatureGrader workflow and example YAML file.  In this case if Step1-1 passes,
+Step1-3 will be run next.  Earlier steps must be less restrictive than
+later steps (if the earlier step fails, there should be no way that a later one could pass).
+\texttt{failures} are the two student-provided Cucumber scenarios that \emph{should fail} when
+run because of mutations (bugs) inserted in the app.
 }
 \end{figure}

@@ -1,8 +1,7 @@
 \section{Cloud Grading Architecture With OpenEdX}
 \label{sec:arch}
 
-We believed the best way to build a robust and scalable autograder was
-to adopt a narrow Unix-like view of what an autograder does: it is a
+We adopt a narrow Unix-like view of an autograder: it is a
 stateless command-line program that, given a student work submission and
 a rubric, computes a score and some textual feedback.  We then treat
 separately the question of how to connect this program to an LMS.
@@ -12,7 +11,20 @@ late penalties are computes, where the gradebook is stored, any other
 LMS behaviors---are out of scope, as is the question of whether these
 autograders should replace or supplement manual grading by instructors.
 
-\subsection{OpenEdX and XQueues}
+\subsection{Student Experience}
+
+Our initial implementation of \texttt{rag} was designed to work with
+Coursera, but both the interface and student experience are similar
+between Coursera and OpenEdX.  A logged-in learner navigates to a page
+containing instructions and handouts for a homework assignment;
+when ready, the learner submits a single file or a
+\texttt{tar} or \texttt{zip} archive through a standard HTTP
+file-upload form.  A short time later, typically less than a minute, the
+learner can refresh the page to see feedback on her work from the
+autograder.  Depending on the course policy, she may be able to improve
+her work and resubmit.
+
+\subsection{Interface Between Autograders and OpenEdX}
 
 \tbd{point to OpenEdX documentation}
 
@@ -71,7 +83,7 @@ to a specific student is leaked if the autograder is compromised.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.75\textwidth]{autograder_arch.pdf}
+  \includegraphics[width=0.75\textwidth]{figs/autograder_arch.pdf}
   \caption{\label{fig:arch}
   Since our autograders rely on many libraries,
   tools, support files, and so on, we encapsulate the autograder in a
@@ -105,6 +117,11 @@ correctly given a correct submission.
 
 
 \subsection{Robustness and Security}
+
+Since ill-behaved student code is a concern, there are various layers of
+security.  For the RSpecGrader, the tests must be run in the same
+process as the student's code.  They are run in a separate interpreter
+thread that is protected by a timeout and in which large 
 
 Multiple layers of security: watchdog timers, sandboxed interpreter, threads. Hollingsworth 1960 observed that it was possible for students to submit programs that deliberately damage the autograder.
 

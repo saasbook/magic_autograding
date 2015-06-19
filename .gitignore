@@ -1,0 +1,9 @@
+TAGS
+*.aux
+*.bbl
+*.blg
+*.log
+#*
+.#*
+.DS_Store
+magic.pdf
