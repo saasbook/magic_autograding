@@ -1,0 +1,54 @@
+\section{\emph{rag}, a Ruby Autograder for ESaaS}
+
+
+
+a.	Background: what's Rspec? what's Cucumber? what's Travis?
+
+b.	our narrow Unix-like view of an autograder: gets submission & rubric, outputs a score and feedback. All other policy issues - resubmission policy,gradebook maintenance, LMS features - are out of scope.  Likewise, we don't argue one way or the other whether autograders should completely replace human evaluation
+
+c.	Student expderience. Submit files online, wait a bit, receive numerical score + feedback.
+
+d.	RSpecGrader
+
+coverage
+
+internal structure of code, eg checking if students used correct
+abstraction 
+
+
+
+e.	FeatureGrader
+
+
+In mutation testing, invented by George Amman and Jeff Offutt (cite), a
+testing tool mutates the program under test by introducing random logic
+errors that do not result in syntax or compilation errors.  If no test fails
+in the presence of an introduced error, there is a gap in test
+coverage.  We use a variant of this approach to grade an
+assignment in which students are required to write integration-level
+tests for an existing SaaS application.
+
+Students use the Cucumber tool (cite) to create these tests.
+Cucumber allows integration and acceptance tests to be formulated in
+stylized plain text, as Figure~\ref{fig:cucumber} shows.
+Since a SaaS application is being tested, black-box integration tests
+must stimulate the SaaS application in the same way that
+a human being user a Web browser would.
+Depending on the testing environment, Cucumber can do this in one of
+three ways.  The first uses a built-in browser simulator that hooks
+directly into 
+the Rails application server, and thus can only be used
+with application stacks that use this server and that do not rely on
+JavaScript.  The second is using Webdriver (formerly 
+Selenium) to control a real browser via a now-standard remote-control
+API (cite Webremote).  The third, which we use, uses a Ruby library called
+Mechanize\footnote{Based on the Perl library of the same name.} to
+direct requests to an application deployed on  a remote server.  
+
+
+f.	CIGrader - like AWAT [cite]. can assess full-stack GUI apps interactively. Mentioned as Future  Directions area in both Douce and Ihantola surveys.
+
+g.	Summary table: grader types, types of assignments they grade, and how students submit work
+
+
+

@@ -1,0 +1,31 @@
+\section{Background}
+
+
+There has been lots of work in
+autograding~\cite{ihantola-2010-autograding-survey}
+
+a.	extensive past work on autograding of code. Navrat 2014 even shows that performance on frequent but short autograded programming assignments can be used to predict students' final grades in programming-related courses with surprising accuracy.
+
+b.	taxonomy: fully automated vs. human assist; test-based vs. static analysis
+
+c.	about ESaaS; projects; use of Pivotal Tracker, CodeClimate, Travis for coverage
+From 2008 to 2010, how we revised course: methodologies become tools,
+allowing quantiative checking of students' work; same tools were
+ultimately repurposed to help with autograding.
+
+
+
+\begin{enumerate}
+
+\item
+Very early autograders relied on linking student-submitted code with a
+test harness~\cite{hollingsworth60,algol-autograders}; among the
+problems with this approach are fragility (syntax errors in student code
+may cause autograder not to compile at all), integrity (student code can
+subvert the autograder or cause bad things to happen).
+
+\item Output-based: a script builds and runs the student's code and
+compares it with reference output.  This technique limits the kind of
+grading that can be done---for example, should 
+
+\end{enumerate}

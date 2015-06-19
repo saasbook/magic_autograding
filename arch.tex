@@ -1,0 +1,90 @@
+\section{Cloud Grading Architecture With OpenEdX}
+
+
+
+a.	queue system and openEdX; can connect to other stuff as well
+
+
+\begin{figure}
+  \caption{\label{fig:arch}
+  Students submit each assignment by posting a Web form to a designated
+  URI.  
+[Diagram: students submit to queue server, autograders pull from queue
+  server, each has as input the rubric and HW and outputs comments and
+  score]
+
+\end{figure}
+
+As Figure~\ref{fig:arch} shows, 
+our autograders follow a producer-consumer architecture that we
+originally developed to work with Coursera's (cite) infrastructure and
+subsequently modified to work with the open-source edX framework (cite).
+Since each type of autograder relies on many libraries,
+tools, support files, and so on, we encapsulate each in its own VM image.
+At VM startup, the autograder script automatically runs from
+\texttt{/etc/init.d} and examines a deploy-time environment variable
+to get the base URI of the queue name from which to draw assignments.  
+This URI is an endpoint that accepts three RESTful request types:
+
+\begin{enumerate}
+\item Check queue length (number of assignments waiting to be graded).
+  The implementation of the queue may be distributed, but the endpoint
+  presents a single logical queue.
+\item Retrieve a submission.  The return value is a submission along
+  with an opaque assignment-ID and an opaque student-ID.
+\item Post a grade.  The request includes the assignment-ID, student-ID,
+  grade (a short string or numeric value), and freeform text feedback.
+\end{enumerate}
+
+If the queue is empty, the autograder sleeps for a few minutes and checks
+again; this machinery will soon be extracted into a separate manager
+that automatically manages the number of active autograder instances
+based on the queue length.
+
+Once an autograder retrieves a submission to grade, it must post a grade
+within a configurable timeout period (typically a few minutes).
+If the timeout expires, the queue server is responsible for re-queueing
+that assignment for regrading.  (TBD: at some point if it's queued too
+many times we should time it out, as it may be pathological)
+
+We deploy the autograders on Amazon EC2.  We have many reasons for
+deploying on the cloud vs. the client (for example, autograders that run on
+the student's own computer, as in (cite AutoGradeMe, some of the AI/ML
+ones, others),  for using a stateless client-server
+architecture rather
+
+Scalability to MOOC size using an elastic cloud.  In our design,
+  the autograders 
+  themselves are stateless; the only state is in the queue manager,
+  which must keep track of assignments whose autograder times out.  The
+  stateless design allows us to exploit the public cloud's elasticity to
+  scale the number of 
+  autograder instances rapidly and allow students to get quick
+  feedback.  Even our most sophisticated autograders take less than one
+  machine-minute per assignment; at less than 10 cents per machine-hour,
+  MOOC-scale 
+  autograding is cost-effective.
+
+b.	autograder, rubric file
+
+c.	CI workflow for ensuring autograders running
+
+d.	Multiple layers of security: watchdog timers, sandboxed interpreter, threads. Hollingsworth 1960 observed that it was possible for students to submit programs that deliberately damage the autograder.
+
+ Trustworthiness: because we control the VM image in which the
+  autograder runs and the grades are recorded to a central queue server
+  which we also control, students cannot tamper with the autograder's
+  results or functioning.
+
+ Sandboxing: while our RSpec-based autograder performs much of its
+  own sandboxing, even if student code escapes the sandbox we can shut
+  down and undeploy the VM.  
+
+  TBD Watchdog timers that do this if miss several heartbeats.
+
+
+
+e.	Policy: resubmission, plagiarism detection, formative vs summative, avoding "autograder-driven development"
+
+
+

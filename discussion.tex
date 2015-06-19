@@ -1,0 +1,39 @@
+\section{Discussion}
+
+
+
+a.	Value of tools ecosystem in Rails world. Majority of new autograders in 2010 survey were either for Java or language-neutral with output checking only. We had good reasons for using Ruby and still do. Student feedback in campus course bears this out.
+
+
+When we set about revising the Software Engineering course in which
+these autograders are used, our choice of Ruby and Rails was not without
+controversy.  Some students complained about having to learn another
+language (the three lower-division courses that form the gateway into
+the major are taught in Python, Java, and C), despite our assurances
+that they would need this skill  as professional developers, learning a
+new language every three or four years.  Our view was, and continues to
+be, that the superior tools for testing, code analysis and code grooming
+available in Ruby resulted in higher productivity and student engagement
+that justified this learning curve.  What we did not anticipate was that
+we ourselves would ultimately turn to these same tools to facilitate
+automated grading.  Of the three autograders we have described, only the
+first, using RSpec, is Ruby-specific.
+
+
+
+b.	Getting unnecessary stuff out of the way: avoid wasting student time with admin, setup, etc.  
+
+1.	VM provides courseware; maybe soon C9.  
+
+2.	Heroku provides deployment.  
+
+3.	OpenEdX presents the HW explanations, videos, selfcheck questions along the way using RuQL (cite), inspired by ideas like OKgrader (cite)
+
+c.	Challenge: tuning rubrics. Use campus course to debug.
+
+d.	Challenge: stability. By and large edX works.  Good separation of concerns between LMS & autograder authors.
+
+e.	Challenge: test suite quality. THis si a general problem in SWE. Example: if multiple tests are effectively redundant, student scoring is positively distorted if all pass and negatively distorted if all fail.
+
+
+
