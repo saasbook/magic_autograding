@@ -6,7 +6,7 @@ Feature: Testing instructor created homeworks
   Scenario Outline: Runs AutoGrader with a given spec and subject
     Given I have the homework in "."
     When I run AutoGrader for <test_subject> and <spec>
-    Then I should see that the results are <expected_result>
+    Then I should see that the results are <expected>
     And I should see the execution results with <test_title>
   Examples:
     | test_title  | test_subject         | spec        | expected     |
