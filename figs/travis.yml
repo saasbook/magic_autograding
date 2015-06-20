@@ -1,0 +1,8 @@
+language: ruby
+rvm: 
+  - "1.9.3"
+script:
+# install.feature exists in homework repos
+# - bundle exec cucumber install/install.feature
+  - bundle exec rspec spec  
+  - bundle exec cucumber features
