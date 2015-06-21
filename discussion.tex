@@ -1,8 +1,7 @@
 \section{Discussion}
 
 
-
-a.	Value of tools ecosystem in Rails world. Majority of new autograders in 2010 survey were either for Java or language-neutral with output checking only. We had good reasons for using Ruby and still do. Student feedback in campus course bears this out.
+\subsection{The Value of Great Tools}
 
 
 When we set about revising the Software Engineering course in which
@@ -19,25 +18,36 @@ we ourselves would ultimately turn to these same tools to facilitate
 automated grading.  Of the three autograders we have described, only the
 RSpecGrader is Ruby-specific.
 
+\subsection{Zero-Configuration Autograders}
+
+Both  surveys of autograders ask why existing autograders aren't reused more.
+We believe one reason is the configuration required for teachers to deploy them and
+students to submit work to them.  Since we
+faced and surmounted this problem in deploying our ``autograders as a
+service'' with OpenEdX, we can make them easy for others to use.
+
+We already have several instructors running SPOCs based on our
+materials~\cite{moocs-spocs-TR} using OpenEdX.  They not only use our
+autograders but can create new assignments that take advantage of them.
+
+or create another adapter than XQueue - refer to figure - we're now
+doing it for Octobear
+
+\subsection{Challenge: Tuning Rubrics}
+
+tuning rubrics. Use campus course to debug. Use CI to
+verify we haven't broken stuff.
+
+test suite quality: THis si a general problem in SWE. Example: if multiple tests are effectively redundant, student scoring is positively distorted if all pass and negatively distorted if all fail.
 
 
-b.	Getting unnecessary stuff out of the way: avoid wasting student time with admin, setup, etc.  
+\subsection{Challenge: Avoiding ``Autograder-Driven Development''}
 
-1.	VM provides courseware; maybe soon C9.  
+\subsection{Challenge: Stability}
 
-2.	Heroku provides deployment.  
-
-3.	OpenEdX presents the HW explanations, videos, selfcheck questions along the way using RuQL (cite), inspired by ideas like OKgrader (cite)
-
-c.	Challenge: tuning rubrics. Use campus course to debug.
-
-Challenge: avoding "autograder-driven development"
-
-
-d.	Challenge: stability. By and large edX works.  Good separation
+By and large edX works.  Good separation
 of concerns between LMS and autograder authors.
 
-e.	Challenge: test suite quality. THis si a general problem in SWE. Example: if multiple tests are effectively redundant, student scoring is positively distorted if all pass and negatively distorted if all fail.
 
 
 
