@@ -40,18 +40,15 @@ abstractions, etc; maybe include snippet from an existing spec}
 
 \subsection{FeatureGrader}
 
-
-In mutation testing, invented by George Amman and Jeff Offutt (cite), a
-testing tool mutates the program under test by introducing random logic
-errors that do not result in syntax or compilation errors.  If no test fails
-in the presence of an introduced error, there is a gap in test
-coverage.  We use a variant of this approach to grade an
-assignment in which students are required to write integration-level
-tests for an existing SaaS application.
-
-Students use the Cucumber tool (cite) to create these tests.
-Cucumber allows integration and acceptance tests to be formulated in
+One of our assignments requires students to write integration-level
+tests using Cucumber, which allows such tests to be formulated in
 stylized plain text, as Figure~\ref{fig:cucumber} shows.
+Our autograder for this
+style of assignment is inspired by mutation testing, a technique invented
+by George Amman and Jeff 
+Offutt~\cite{ammann-offutt-sw-testing} in which a
+testing tool pseudo-randomly mutates the program under test to ensure
+that some test fails as a result of these introduced errors.
 
 %% Since a SaaS application is being tested, black-box integration tests
 %% must stimulate the SaaS application in the same way that
@@ -69,6 +66,22 @@ stylized plain text, as Figure~\ref{fig:cucumber} shows.
 
 \tbd{explanation of FeatureGrader basics}
 
+\begin{figure}
+  \begin{minipage}{0.45\textwidth}%
+    \lstinputlisting{figs/cucumber_example.feature}%
+  \end{minipage}%
+  \begin{minipage}{0.5\textwidth}%
+    \lstinputlisting[language=Ruby]{figs/cucumber_step_def_example.rb}%
+  \end{minipage}%
+  \caption{\label{fig:cucumber} Cucumber accepts integration tests 
+    written in stylized prose (left) and uses regular expressions to map each
+    step to a \emph{step definition} that sets up preconditions, exercises the app,
+    or checks postconditions.  Step definitions 
+    can stimulate a full-stack GUI-based web application in various
+    ways, including remote-controlling a real browser with Webdriver
+    (formerly Selenium) or using the Ruby Mechanize library to interact
+    with a remote site.}
+\end{figure}
 
 
 
@@ -79,7 +92,7 @@ stylized plain text, as Figure~\ref{fig:cucumber} shows.
   \begin{minipage}{0.55\textwidth}%
   \lstinputlisting{figs/feature_grader_example.yml}%
   \end{minipage}
-  \caption{\label{fig:cucumber}%
+  \caption{\label{fig:featuregrader}%
 FeatureGrader workflow and example YAML file.  In this case if Step1-1 passes,
 Step1-3 will be run next.  Earlier steps must be less restrictive than
 later steps (if the earlier step fails, there should be no way that a later one could pass).
