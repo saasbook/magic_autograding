@@ -1,0 +1,14 @@
+Feature: Testing instructor created homeworks
+  As a AutoGrader maintainer
+  In order to check that the supplied homework can be graded
+  I would like these homeworks to be automatically tested
+  
+  Scenario Outline: Runs AutoGrader with a given spec and subject
+    Given I have the homework in "."
+    When I run AutoGrader for <test_subject> and <spec>
+    Then I should see that the results are <expected>
+    And I should see the execution results with <test_title>
+  Examples:
+    | test_title  | test_subject         | spec        | expected     |
+    | vs solution | solutions/hw4.tar.gz | rag/hw4.yml | Score: 100.0 |
+    | vs skeleton | public/hw4.tar.gz    | rag/hw4.yml | Score: 0.0   |

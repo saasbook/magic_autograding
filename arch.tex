@@ -105,15 +105,31 @@ updated in place
 
 \subsection{CI Workflow for Autograders}
 
-\tbd{Paul to describe CI workflow for ensuring autograders working
-  properly}
+For continuous integration, we use Travis-CI, which is integrated with GitHub and runs on submission of patches for acceptance ("pull request" in GitHub terminology), as well as other events. Users develop on their own forks of a repository, then submit pull requests back to the main repository when finished. Even when not finished, pull requests to the main repo may draw attention that can keep the team informed or resolve issues.
 
+When a build is triggered, it typically loads a new virtual host, installs runtime binaries and basic libraries, clones the associated GitHub repo including the .travis.yml configuration file, installs dependencies, and runs indicated scripts. Our simple configuration file only specifies a Ruby version before Travis calls the commands under the 'script:' key, which start the test suites. Those commands use 'bundle exec' to choose rspec and cucumber versions indicated in the project's Gemfile. The tests are in the repo's spec and features folders, and their output is included in the record of the build run.
 
-\begin{figure}
-  Cucumber code snippet here from one of the homework's CI files
+\begin{figure}[!htbp]
+  \centering
+  \begin{minipage}{0.70\textwidth}%
+  \lstset{tabsize=1,basicstyle=\scriptsize\ttfamily}%
+  \lstinputlisting{figs/travis.yml}%
+  \end{minipage}
   \caption{\label{fig:rag-ci}%
-Example Cucumber scenario, run in CI, that ensures the autograder works
-correctly given a correct submission.
+  Typical .travis.yml file.
+}
+\end{figure}
+
+For the autograders themselves, it runs the rspec and cucumber tests located in the default spec and features directories. For the separate homework repositories that use the autograders as a library, we used cucumber Scenario Outline AST tables to organize tabular input and assert results. These CI features run the autograders locally against inputs via the Open3 library in order to control output streams and return codes. In the homework repos, we also added a cucumber feature to script the install and verify the configuration of the autograders, which simplified the use of multiple repositories, especially for new users.
+
+\begin{figure}[!htbp]
+  \centering
+  \begin{minipage}{0.99\textwidth}%
+  \lstset{tabsize=1,basicstyle=\scriptsize\ttfamily}%
+  \lstinputlisting{figs/ci_feature.txt}%
+  \end{minipage}
+  \caption{\label{fig:rag-ci}%
+  Cucumber feature Scenario Outline AST table for CI.
 }
 \end{figure}
 
