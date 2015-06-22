@@ -2,23 +2,35 @@
 
 %% must be 70-150 words to meet LNCS guidelines
 
-What others have done that we build on: correctness checks, code
-coverage, use of various testing styles (unit, functional, mutation)
+We describe our experience developing and using a specific category of
+cloud-based autograder (automatic evaluator of student programming
+assignments) for software engineering.  To
+establish our position in the landscape, our autograder is \emph{fully
+automatic}, rather than serving to increase instructor productivity
+during manual grading, and \emph{test based}, in that 
+it exercises student code under controlled conditions rather than
+relying on static analysis or comparing only the output of student
+programs against reference output.  We include a brief description of
+the course for which 
+the autograders were built, \emph{Engineering Software as a Service},
+and the rationale for building them in the 
+first place, since we had to surmount some new obstacles related to the
+scale and delivery mechanism of the course.
 
-Infrastructure novelty: Cloud-based autograding is scalable,
-sandboxable, persistent, trustworthy.  Our cloud-based producer-consumer
+In three years of using the autograders in conjunction with both a
+software engineering MOOC and the residential course on which the MOOC
+is based, they have reliably graded hundreds of thousands of student
+assignments, and are currently being refactored to make their code more
+easily extensible and maintainable.  We have found cloud-based
+autograding to be scalable,
+sandboxable, and reliable, and students value the near-instant feedback
+and opportunities to resubmit homework assignments more than once.
+Our open-source, cloud-based, producer-consumer
 autograder architecture allows custom autograders to be plugged in
-easily, even for non-CS courses.  Compatible with edX and open source,
-but uses simple RESTful APIs.
+easily, even for non-CS courses, and while we built it to be compatible
+with the OpenEdX platform, it should be easy to plug into other Learning
+Management Systems.
 
-Grading novelty: Taking advantage of dynamic language features to
-facilitate more thorough inspection of internal code (white box tests)
-
-Experience: successful use of three distinct autograding strategies in
-successive offerings of a MOOC.  Over XXX thousand assignments have been
-graded using Amazon EC2.
-
-Available to other instructors via SPOC; we run them as a service.
 
 \keywords{TBD keywords here}
 

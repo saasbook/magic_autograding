@@ -1,16 +1,65 @@
 \section{\emph{rag}, a Ruby Autograder for ESaaS}
 
-\texttt{rag} is actually a collection of three different autograding
-``engines'' based on three open source testing
-tools:
-\begin{enumerate}
+\subsection{Why Another Autograder?}
 
-\item RSpec is a unit-testing and
+Given that 17 autograding systems and over 60 papers about them were
+produced from 2006--2010 alone~\cite{ihantola-2010-autograding-survey},
+why did we choose to build our own?
+First, as the survey authors point
+out, many existing systems' code
+is not readily available or is tightly integrated to a particular Learning
+Management System (LMS).  We needed to integrate with Coursera and
+later OpenEdX, both of which were new and had not yet embraced
+standards such as Learning Tools Interoperability\uf{imsglobal.org/lti}.
+Unlike most previous 
+systems, ours would need to work at ``cloud scale'' and respond to
+workload spikes: the initial
+offering of our MOOC in February 2012  
+attracted over 50,000 learners, and we expected
+that thousands of submissions would arrive bunched together close to the
+submission deadline.  For the same reason, our graders needed to be
+highly insulated from the LMS, so that students whose code accidentally
+or deliberately damaged the autograder could not compromise other
+information in the LMS.
+Similarly, with a diverse and international group (less than
+25\% of our MOOC learners were from the USA) with varied hardware,
+software, and operating systems, autograding had to be ``zero
+configuration,'' requiring no installation of software on learners' own
+computers, and had to be trustworthy, in that the student
+assignments were authoritatively graded on trusted servers rather than
+having students self-report grades computed by their own computers.
+
+Having chosen Ruby and Rails for their excellent testing and
+code-grooming tools, our approach was to repurpose those same tools into
+autograders that would give finer-grained feedback than human graders
+using more detailed tests, and would be easier to repurpose than
+those built for other languages.
+
+
+\subsection{RSpecGrader}
+
+\texttt{rag}\uf{github.com/saasbook/rag} 
+is actually a collection of three different autograding
+``engines'' based on three open source testing
+tools.  The first of these is
+RSpec, a unit-testing and
 BDD/TDD framework descended from XUnit, but which exploits Ruby's
 flexible syntax to embed a unit-testing DSL in Ruby that results in very
 readable tests.  
 
-\item Cucumber allows
+\tbd{describe RSpecGrader, coverage, how to assign points to subparts,
+how we can check internal structure of code/whether students used correct
+abstractions, etc; maybe include snippet from an existing spec}
+
+\tbd{Example of an RSpecGrader rubric file}
+
+\subsection{FeatureGrader}
+
+One of our assignments requires students to write integration-level
+tests using Cucumber, which allows such tests to be formulated in
+stylized plain text, as Figure~\ref{fig:cucumber} shows.
+
+ Cucumber allows
 integration-level tests or user stories~\cite{user-stories} to be
 expressed in plain prose, using regular expressions to match each step
 of such a test to a block of code that sets up preconditions (\texttt{Given}), stimulates
@@ -18,31 +67,7 @@ the system (\texttt{When}), or checks postconditions (\texttt{Then}) as
 appropriate; our code blocks are in Ruby, but the Cucumber framework
 itself is language-agnostic.  
 
-\item Capybara~\uf{jnicklas.github.io/capybara}
-provides a Ruby-embedded DSL for interacting with Web-based
-applications.
-One can trigger actions on a web page such as filling in form fields
-or clicking a button, and use XPath~\cite{xpath} to examine the
-response page delivered by the server.
-Capybara actions can either run in the same process as the app being
-tested, or when used in conjunction with the Mechanize
-library~\footnote{\url{https://rubygems.org/gems/mechanize}; based on
-  the older Perl library of the same name.}, can trigger these actions
-against a remote application, allowing black-box testing.
 
-\end{enumerate}
-
-\subsection{RSpecGrader}
-
-\tbd{describe RSpecGrader, coverage, how to assign points to subparts,
-how we can check internal structure of code/whether students used correct
-abstractions, etc; maybe include snippet from an existing spec}
-
-\subsection{FeatureGrader}
-
-One of our assignments requires students to write integration-level
-tests using Cucumber, which allows such tests to be formulated in
-stylized plain text, as Figure~\ref{fig:cucumber} shows.
 Our autograder for this
 style of assignment is inspired by mutation testing, a technique invented
 by George Amman and Jeff 
@@ -103,9 +128,25 @@ run because of mutations (bugs) inserted in the app.
 
 \subsection{MechanizeGrader}
 
-Both surveys of recent
-autograders~\cite{ihantola-2010-autograder-survey,douce-2005-autograder-survey} mentioned as
+Surveys of recent
+autograders~\cite{ihantola-2010-autograding-survey,douce-2005-autograding-survey} mentioned as
 a ``future direction'' a grader that can assess full-stack or GUI apps.
+
+
+Capybara~\uf{jnicklas.github.io/capybara}
+provides a Ruby-embedded DSL for interacting with Web-based
+applications.
+One can trigger actions on a web page such as filling in form fields
+or clicking a button, and use XPath~\cite{xpath} to examine the
+response page delivered by the server.
+Capybara actions can either run in the same process as the app being
+tested, or when used in conjunction with the Mechanize
+library~\footnote{\url{https://rubygems.org/gems/mechanize}; based on
+  the older Perl library of the same name.}, can trigger these actions
+against a remote application, allowing black-box testing.
+
+
+
 Our MechanizeGrader achieves this by combining Capybara's embedded DSL
 for interacting with a Web application with the Mechanize HTTP library
 for interacting with and scraping a remote site.
@@ -117,6 +158,7 @@ for interacting with and scraping a remote site.
 
 
 \begin{figure}
+  \input{figs/grader_summary}
   \caption{\label{fig:grader_summary} Summary of the autograder
     engines: grader types, types of assignments they grade, and
     how students submit work}

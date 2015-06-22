@@ -1,0 +1,23 @@
+\begin{tabular}{|p{0.15\textwidth}|p{0.15\textwidth}|p{0.7\textwidth}|}
+ \hline
+ \textbf{Grader} & \textbf{Based on} & \textbf{Student Assignment Type} \\
+ \hline
+ RSpecGrader &
+ unit testing &
+ Student submits one or more class files; black-box and ``intrusive''
+ unit tests against functions and groups of functions are performed
+ \\
+ FeatureGrader &
+ simplified mutation testing &
+ Student submits integration tests written using Cucumber; bugs inserted
+ in reference app attempt to trigger test failures to check test suite
+ completeness and test fragility
+ \\
+ MechanizeGrader & 
+ staging-like integration testing &
+ Student deploys full-stack app to public cloud; ``black box'' tests
+ stimulate remote server and parse/analyze output, including execution
+ of JavaScript if needed
+ \\
+ \hline
+\end{tabular}
