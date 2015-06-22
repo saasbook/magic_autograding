@@ -1,33 +1,5 @@
 \section{\emph{rag}, a Ruby Autograder for ESaaS}
 
-\subsection{Why Another Autograder?}
-
-Given that 17 autograding systems and over 60 papers about them were
-produced from 2006--2010 alone~\cite{ihantola-2010-autograding-survey},
-why did we choose to build our own?
-First, as the survey authors point
-out, many existing systems' code
-is not readily available or is tightly integrated to a particular Learning
-Management System (LMS).  We needed to integrate with Coursera and
-later OpenEdX, both of which were new and had not yet embraced
-standards such as Learning Tools Interoperability\uf{imsglobal.org/lti}.
-Unlike most previous 
-systems, ours would need to work at ``cloud scale'' and respond to
-workload spikes: the initial
-offering of our MOOC in February 2012  
-attracted over 50,000 learners, and we expected
-that thousands of submissions would arrive bunched together close to the
-submission deadline.  For the same reason, our graders needed to be
-highly insulated from the LMS, so that students whose code accidentally
-or deliberately damaged the autograder could not compromise other
-information in the LMS.
-Similarly, with a diverse and international group (less than
-25\% of our MOOC learners were from the USA) with varied hardware,
-software, and operating systems, autograding had to be ``zero
-configuration,'' requiring no installation of software on learners' own
-computers, and had to be trustworthy, in that the student
-assignments were authoritatively graded on trusted servers rather than
-having students self-report grades computed by their own computers.
 
 Having chosen Ruby and Rails for their excellent testing and
 code-grooming tools, our approach was to repurpose those same tools into
@@ -35,6 +7,12 @@ autograders that would give finer-grained feedback than human graders
 using more detailed tests, and would be easier to repurpose than
 those built for other languages.
 
+\subsection{Rubric Files}
+
+autograder, rubric file - schematic diagram
+
+current refactoring to allow rubric files to be pulled on demand and
+updated in place
 
 \subsection{RSpecGrader}
 
@@ -51,7 +29,7 @@ readable tests.
 how we can check internal structure of code/whether students used correct
 abstractions, etc; maybe include snippet from an existing spec}
 
-\tbd{Example of an RSpecGrader rubric file}
+\tbd{SJ: Example of an RSpecGrader rubric file}
 
 \subsection{FeatureGrader}
 
@@ -89,7 +67,7 @@ that some test fails as a result of these introduced errors.
 %% Mechanize\footnote{Based on the Perl library of the same name.} to
 %% direct requests to an application deployed on  a remote server.  
 
-\tbd{explanation of FeatureGrader basics}
+\tbd{SJ: explanation of FeatureGrader basics}
 
 \begin{figure}
   \begin{minipage}{0.45\textwidth}%
@@ -151,7 +129,7 @@ Our MechanizeGrader achieves this by combining Capybara's embedded DSL
 for interacting with a Web application with the Mechanize HTTP library
 for interacting with and scraping a remote site.
 
-\tbd{explain brefly how it works and how it's configured, how tests
+\tbd{SJ: explain brefly how it works and how it's configured, how tests
   external app given just a URI, etc}
 
 \tbd{cite AWAT as another example of GUI grader}

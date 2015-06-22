@@ -1,14 +1,53 @@
 \section{Cloud Grading Architecture With OpenEdX}
 \label{sec:arch}
 
+
+
 We adopt a narrow Unix-like view of an autograder: it is a
 stateless command-line program that, given a student work submission and
 a rubric, computes a score and some textual feedback.  We treat
 separately the question of how to connect this program to an LMS.
 All other policy issues---whether students can resubmit homeworks, how
 late penalties are computes, where the gradebook is stored, any other
-LMS behaviors---are out of scope, as is the question of whether these
+LMS behaviors---are out of scope\footnote{Due to an implementation
+  artifact of OpenEdX, the autograders currently do adjust their scores
+  to reflect late penalties, based on metadata about due dates provided
+  with each assignment submission.}, as is the question of whether these
 autograders should replace or supplement manual grading by instructors.
+
+\subsection{Why Another Autograder?}
+
+Given that 17 autograding systems and over 60 papers about them were
+produced from 2006--2010 alone~\cite{ihantola-2010-autograding-survey},
+why did we choose to build our own?
+First, as the survey authors point
+out, many existing systems' code
+is not readily available or is tightly integrated to a particular Learning
+Management System (LMS).  We needed to integrate with Coursera and
+later OpenEdX, both of which were new and had not yet embraced
+standards such as Learning Tools Interoperability\uf{imsglobal.org/lti}.
+Unlike most previous 
+systems, ours would need to work at ``cloud scale'' and respond to
+workload spikes: the initial
+offering of our MOOC in February 2012  
+attracted over 50,000 learners, and we expected
+that thousands of submissions would arrive bunched together close to the
+submission deadline.  For the same reason, our graders needed to be
+highly insulated from the LMS, so that students whose code accidentally
+or deliberately damaged the autograder could not compromise other
+information in the LMS.
+Similarly, 
+%% with a diverse and international group (less than
+%% 25\% of our MOOC learners were from the USA) with varied hardware,
+%% software, and operating systems, autograding had to be ``zero
+%% configuration,'' requiring no installation of software on learners' own
+%% computers, and 
+the autograders had to be trustworthy, in that the student
+assignments were authoritatively graded on trusted servers rather than
+having students self-report grades computed by their own computers
+(although of course we still have no guarantee that students are doing
+their own work).
+
 
 \subsection{Student Experience}
 
@@ -98,68 +137,90 @@ to the learners' true identities maintained only on OpenEdX.
 Hence no sensitive information connecting a work product to a specific
 student is leaked if the autograder is compromised.
 
-\subsection{Rubric Files}
-
-autograder, rubric file
-
-current refactoring to allow rubric files to be pulled on demand and
-updated in place
 
 \subsection{CI Workflow for Autograders}
 
 To ensure that changes to rubric files, homework assignments, or the
-autograder code itself doesn't break the autograders, 
-we setup continuous integration tasks using Travis-CI, which is integrated with
+autograder code itself don't break the autograders, 
+we set up continuous integration tasks using Travis-CI, which is integrated with
 GitHub and runs on submission of patches for acceptance (``pull request''
-in GitHub terminology), as well as other events. Users develop on their
-own forks of a repository, then submit pull requests back to the main
-repository when finished. Even when not finished, pull requests to the
-main repo may draw attention that can keep the team informed or resolve
-issues. 
+in GitHub terminology), as well as other events. 
+%% Users develop on their
+%% own forks of a repository, then submit pull requests back to the main
+%% repository when finished. Even when not finished, pull requests to the
+%% main repo may draw attention that can keep the team informed or resolve
+%% issues. 
+In essence, when a pull request is made\footnote{A pull request is
+  GitHub's term for the mechanism by which a developer requests that a
+  set of changes 
+  be merged into the production branch of a codebase.},  
+the CI task instantiates  a
+new virtual 
+machine, installs all the needed software to build an autograder image
+based on the codebase as it would appear after the pull request,
+and tests the autograder with known solutions versioned with each homework, as
+Figure~\ref{fig:rag-ci} shows.
+%% These CI features run the autograders locally against
+%% inputs via the Open3 library in order to control output streams and
+%% return codes. 
+Each homework assignment repository also has a Cucumber scenario that
+automates the installation of the autograders and verifies their
+configuration. 
+%% which simplified the use of multiple repositories, especially for new
+%% users. 
 
-When a build is triggered, it typically loads a new virtual host, installs runtime binaries and basic libraries, clones the associated GitHub repo including the .travis.yml configuration file, installs dependencies, and runs indicated scripts. Our simple configuration file only specifies a Ruby version before Travis calls the commands under the 'script:' key, which start the test suites. Those commands use 'bundle exec' to choose rspec and cucumber versions indicated in the project's Gemfile. The tests are in the repo's spec and features folders, and their output is included in the record of the build run.
+If the CI tests succeed, it is safe to merge the pull request into the
+production code and deploy it.  Since at any given time the autograders
+may be in use by the MOOC and several campus SPOCs,
+this CI process provides a valuable safeguard
+against accidentally introducing a breaking change to an autograder to
+which students are actively submitting work.
 
-\begin{figure}[!htbp]
-  \centering
-  \begin{minipage}{0.70\textwidth}%
-  \lstset{tabsize=1,basicstyle=\scriptsize\ttfamily}%
-  \lstinputlisting{figs/travis.yml}%
+%% \begin{figure}[!htbp]
+%%   \centering
+%%   \begin{minipage}{0.70\textwidth}%
+%%   \lstset{tabsize=1,basicstyle=\scriptsize\ttfamily}%
+%%   \lstinputlisting{figs/travis.yml}%
+%%   \end{minipage}
+%%   \caption{\label{fig:rag-ci}%
+%%   Typical .travis.yml file.
+%% }
+%% \end{figure}
+
+\begin{figure}
+  \begin{minipage}{0.5\textwidth}%
+    \lstinputlisting[tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/ci_feature.txt}%
+  \end{minipage}%
+  \begin{minipage}{0.5\textwidth}%
+    \lstinputlisting[basicstyle=\scriptsize\ttfamily]{figs/ci_stepdefs.rb}%
   \end{minipage}
   \caption{\label{fig:rag-ci}%
-  Typical .travis.yml file.
-}
-\end{figure}
-
-For the autograders themselves, it runs the rspec and cucumber tests located in the default spec and features directories. For the separate homework repositories that use the autograders as a library, we used cucumber Scenario Outline AST tables to organize tabular input and assert results. These CI features run the autograders locally against inputs via the Open3 library in order to control output streams and return codes. In the homework repos, we also added a cucumber feature to script the install and verify the configuration of the autograders, which simplified the use of multiple repositories, especially for new users.
-
-\begin{figure}[!htbp]
-  \centering
-  \begin{minipage}{0.99\textwidth}%
-  \lstset{tabsize=1,basicstyle=\scriptsize\ttfamily}%
-  \lstinputlisting{figs/ci_feature.txt}%
-  \end{minipage}
-  \caption{\label{fig:rag-ci}%
-  Cucumber feature Scenario Outline AST table for CI.
+  Left: Cucumber integration test that is run whenever the autograder or
+  homework code is updated.  The scenarios verify that, at a minimum,
+  the autograder reports a score of 100\% when run against the
+  instructor's reference solution and a score of 0\% when run against
+  the empty ``code skeleton'' provided to students.  Right: Example
+  step definitions corresponding to a subset of these steps.
 }
 \end{figure}
 
 
 \subsection{Robustness and Security}
 
-\tbd{finish this section}
-
-Since ill-behaved student code is a concern, there are various layers of
-security.  For the RSpecGrader, the tests must be run in the same
+Hollingsworth observed as early as 1960~\cite{hollingsworth60} that it
+is possible for students 
+to submit programs that deliberately or accidentally damage the autograder. 
+We use various layers of security to mitigate this possibility.
+For the RSpecGrader, the tests must be run in the same
 process as the student's code.  They are run in a separate interpreter
-thread that is protected by a timeout and in which large 
+thread that is protected by a timeout and in which large sections of the
+standard library such as file I/O and most system calls have been
+stubbed out.  The thread is protected by a timeout and the autograder
+itself is run as a child process also protected by a watchdog timer and
+inside of a \texttt{while(1)} loop to automatically recover from
+occasional crashes.  In the worst case, we can shut down the autograder
+VM instance without losing important state, as described previously.
+ 
+\tbd{SJ: FeatureGrader sandboxing}
 
-Multiple layers of security: watchdog timers, sandboxed interpreter, threads. Hollingsworth 1960 observed that it was possible for students to submit programs that deliberately damage the autograder.
-
-
-Sandboxing: while our RSpec-based autograder performs much of its
-  own sandboxing, even if student code escapes the sandbox we can shut
-  down and undeploy the VM.  
-
-
-
-
+\tbd{SJ: MechanizeGrader sandboxing}
