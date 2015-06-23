@@ -87,15 +87,12 @@ lose points according to the weights associated with the particular features tha
 sort of failure.
 
 \begin{figure}
-  \begin{minipage}{0.45\textwidth}%
-    \lstinputlisting{figs/cucumber_example.feature}%
-  \end{minipage}%
-  \begin{minipage}{0.5\textwidth}%
+  \centering
+    \lstinputlisting{figs/cucumber_example.feature}
     \lstinputlisting[language=Ruby]{figs/cucumber_step_def_example.rb}%
-  \end{minipage}%
   \caption{\label{fig:cucumber} Cucumber accepts integration tests 
-    written in stylized prose (left) and uses regular expressions to map each
-    step to a \emph{step definition} that sets up preconditions, exercises the app,
+    written in stylized prose (top) and uses regular expressions to map each
+    step to a \emph{step definition} (bottom) that sets up preconditions, exercises the app,
     or checks postconditions.  Step definitions 
     can stimulate a full-stack GUI-based web application in various
     ways, including remote-controlling a real browser with Webdriver

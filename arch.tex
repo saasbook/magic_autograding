@@ -197,12 +197,15 @@ which students are actively submitting work.
 \begin{figure}
   \centering
   \lstinputlisting[tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/ci_feature.txt}%
+  \lstinputlisting[tabsize=1,language=Ruby,basicstyle=\scriptsize\ttfamily]{figs/ci_stepdefs.rb}%
   \caption{\label{fig:rag-ci}%
-  Cucumber integration test that is run whenever the autograder or
+  Top: Cucumber integration test that is run whenever the autograder or
   homework code is updated.  The scenarios verify that, at a minimum,
   the autograder reports a score of 100\% when run against the
   instructor's reference solution and a score of 0\% when run against
   the empty ``code skeleton'' provided to students.  
+  Bottom: examples of the Cucumber step definitions invoked when these
+  steps are run.
 }
 \end{figure}
 
