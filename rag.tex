@@ -29,7 +29,14 @@ readable tests.
 how we can check internal structure of code/whether students used correct
 abstractions, etc; maybe include snippet from an existing spec}
 
-\tbd{SJ: Example of an RSpecGrader rubric file}
+\begin{figure}
+  \centering
+    \lstinputlisting[tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/rspec_grader_rubric.rb}
+  \caption{\label{fig:rspec-grader-rubric}
+    Example of an RSpec grader rubric
+  }
+\end{figure}
+
 
 \subsection{FeatureGrader}
 
@@ -67,7 +74,17 @@ that some test fails as a result of these introduced errors.
 %% Mechanize\footnote{Based on the Perl library of the same name.} to
 %% direct requests to an application deployed on  a remote server.  
 
-\tbd{SJ: explanation of FeatureGrader basics}
+The FeatureGrader operates by working with an existing application that the student 
+created tests will be applied to.   The application is modified so that the FeatureGrader
+can adjust its behaviour by manipulating certain environment variables. Each of the scenarios 
+required by the assignment are first tested against the working application.  Assuming the 
+students have created the correct acceptance tests in Cucumber then all these tests should pass.  
+
+Next the FeatureGrader starts to mutate the underlying application according to the a specification
+such as the YAML file as shown in Figure~\ref{fig:featuregrader}, running the specified feature against
+a different version of the application and checks that the specified scenarios do fail.  Students 
+lose points according to the weights associated with the particular features that do not generate the correct
+sort of failure.
 
 \begin{figure}
   \begin{minipage}{0.45\textwidth}%
