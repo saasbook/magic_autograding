@@ -1,1 +1,3 @@
-# TBD: example of a step def from HW2 that captures its arguments
+When /^(?:|I )follow "([^"]*)"$/ do |link|
+  click_link(link)
+end
