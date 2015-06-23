@@ -1,90 +1,100 @@
 \section{\emph{rag}, a Ruby Autograder for ESaaS}
 
-
 Having chosen Ruby and Rails for their excellent testing and
 code-grooming tools, our approach was to repurpose those same tools into
 autograders that would give finer-grained feedback than human graders
 using more detailed tests, and would be easier to repurpose than
 those built for other languages.
 
-\subsection{Rubric Files}
-
-autograder, rubric file - schematic diagram
-
-current refactoring to allow rubric files to be pulled on demand and
-updated in place
-
-\subsection{RSpecGrader}
+\begin{figure}
+  \input{figs/grader_summary}
+  \caption{\label{fig:grader_summary} Summary of the autograder
+    engines based on our repurposing of excellent existing open-source
+    tools and testing techniques.  Only the RSpecGrader is
+    Ruby-specific; the others are easily retargetable to other languages
+    and systems.}
+\end{figure}
 
 \texttt{rag}\uf{github.com/saasbook/rag} 
 is actually a collection of three different autograding
-``engines'' based on three open source testing
-tools.  The first of these is
-RSpec, a unit-testing and
-BDD/TDD framework descended from XUnit, but which exploits Ruby's
-flexible syntax to embed a unit-testing DSL in Ruby that results in very
-readable tests.  
-
-\tbd{describe RSpecGrader, coverage, how to assign points to subparts,
-how we can check internal structure of code/whether students used correct
-abstractions, etc; maybe include snippet from an existing spec}
+``engines'' based on open-source testing
+tools, as Figure~\ref{fig:grader_summary} shows.  
+Each engine takes as input a student-submitted work
+product and one or more rubric files, and grades the work according to
+the rubric.  The contents of the rubric files depend on the type of
+engine used.\footnote{Currently the rubric files must be present in the
+  local filesystem of the autograder VM, but refactoring is in progress
+  to allow these files to be securely loaded on-demand from a remote
+  host so that currently-running 
+  autograder VMs do not have to be modified when an assignment is added
+  or changed.}
+The first of these is
+\textbf{RSpecGrader}, based on RSpec, an XUnit-like 
+TDD framework that exploits Ruby's
+flexible syntax to embed a highly readable unit-testing DSL in Ruby.
+The instructor annotates specific tests within an assignment with point
+values (out of 100 total); RSpecGrader computes the total points
+achieved and concatenates and formats the error/failure messages from
+any failed tests, as Figure~\ref{fig:rspec_grader_rubric} shows.
+RSpecGrader  runs RSpec in a separate timer-protected interpreter
+thread in which large sections of the
+standard library such as file I/O and most system calls have been
+stubbed out, allowing us to handle exceptions in RSpec itself as well
+as test failures.  
 
 \begin{figure}
   \centering
-    \lstinputlisting[tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/rspec_grader_rubric.rb}
+    \lstinputlisting[numbers=left,tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/rspec_grader_rubric.rb}
   \caption{\label{fig:rspec-grader-rubric}
-    Example of an RSpec grader rubric
+    In an RSpecGrader rubric, some test cases are ``sanity checks''
+    without which the assignment isn't even graded
+    (lines 2--9) while others contribute points to the
+    student's score.  Ruby's dynamic language features allow us to
+    easily check, for example, that
+a student's implementation of a ``sum all the numbers'' method does not
+simply call a built-in library method (line 7).
   }
 \end{figure}
 
+A variant of RSpecGrader is \textbf{MechanizeGrader}.
+Surveys of recent
+autograders~\cite{ihantola-2010-autograding-survey,douce-2005-autograding-survey}
+mentioned as a ``future direction'' a grader that can assess full-stack
+GUI applications.
+MechanizeGrader does this using Capybara and
+Mechanize\footnote{\url{jnicklas.github.io/capybara},
+\url{rubygems.org/gem/mechanize}}.
+Capybara provides a Ruby-embedded DSL for interacting with Web-based
+applications by providing primitives that trigger actions on a web page
+such as filling in form fields or clicking a button, and examining the
+server's delivered results pages using XPath~\cite{xpath}, as
+Figure~\ref{fig:mechanize_grader_example} shows. 
+Capybara is usually used as an in-process testing tool, but Mechanize
+can trigger Capybara's actions against a remote application, allowing
+black-box testing.
+Students' ``submission'' to MechanizeGrader is therefore the URL to their
+application deployed on the public 
+cloud.  (We use the free tier of Heroku for our assignments and
+projects.)
 
-\subsection{FeatureGrader}
+\begin{figure}
+ \centering
+  \lstinputlisting[language=Ruby,numbers=left]{figs/mechanize_grader_example.rb}
+  \caption{\label{fig:mechanize_grader_example} 
+This excerpt of three test cases from a MechanizeGrader rubric runs
+against a student's 
+deployed full-stack application.}
+\end{figure}
 
-One of our assignments requires students to write integration-level
+Finally, one of our assignments requires students to write integration-level
 tests using Cucumber, which allows such tests to be formulated in
 stylized plain text, as Figure~\ref{fig:cucumber} shows.
-
- Cucumber allows
-integration-level tests or user stories~\cite{user-stories} to be
-expressed in plain prose, using regular expressions to match each step
-of such a test to a block of code that sets up preconditions (\texttt{Given}), stimulates
-the system (\texttt{When}), or checks postconditions (\texttt{Then}) as
-appropriate; our code blocks are in Ruby, but the Cucumber framework
-itself is language-agnostic.  
-
-
 Our autograder for this
 style of assignment is inspired by mutation testing, a technique invented
 by George Amman and Jeff 
 Offutt~\cite{ammann-offutt-sw-testing} in which a
 testing tool pseudo-randomly mutates the program under test to ensure
 that some test fails as a result of these introduced errors.
-
-%% Since a SaaS application is being tested, black-box integration tests
-%% must stimulate the SaaS application in the same way that
-%% a human being user a Web browser would.
-%% Depending on the testing environment, Cucumber can do this in one of
-%% three ways.  The first uses a built-in browser simulator that hooks
-%% directly into 
-%% the Rails application server, and thus can only be used
-%% with application stacks that use this server and that do not rely on
-%% JavaScript.  The second is using Webdriver (formerly 
-%% Selenium) to control a real browser via a now-standard remote-control
-%% API (cite Webremote).  The third, which we use, uses a Ruby library called
-%% Mechanize\footnote{Based on the Perl library of the same name.} to
-%% direct requests to an application deployed on  a remote server.  
-
-The FeatureGrader operates by working with an existing application that the student 
-created tests will be applied to.   The application is modified so that the FeatureGrader
-can adjust its behaviour by manipulating certain environment variables. Each of the scenarios 
-required by the assignment are first tested against the working application.  Assuming the 
-students have created the correct acceptance tests in Cucumber then all these tests should pass.  
-
-Next the FeatureGrader starts to mutate the underlying application according to the a specification
-such as the YAML file as shown in Figure~\ref{fig:featuregrader}, running the specified feature against
-a different version of the application and checks that the specified scenarios do fail.  Students 
-lose points according to the weights associated with the particular features that do not generate the correct
-sort of failure.
 
 \begin{figure}
   \centering
@@ -97,9 +107,20 @@ sort of failure.
     can stimulate a full-stack GUI-based web application in various
     ways, including remote-controlling a real browser with Webdriver
     (formerly Selenium) or using the Ruby Mechanize library to interact
-    with a remote site.}
+    with a remote site.  Our code blocks are in Ruby, but the Cucumber framework
+itself is polyglot.} 
 \end{figure}
 
+Specifically, \textbf{FeatureGrader} operates by working with an
+existing application to which student-created tests will be applied.   The application is modified so that the FeatureGrader
+can adjust the application's behavior by manipulating certain environment variables. Each  scenario 
+specified by the assignment is first tested against the working application.  Assuming the 
+students have created the correct acceptance tests in Cucumber, all these tests should pass.  
+
+Next the FeatureGrader starts to mutate the underlying application
+according to a simple specification (Figure~\ref{fig:featuregrader}), running the specified feature against
+the mutated application and checking that the specified scenarios do in fact fail.  Students 
+lose points according to the weights associated with features that do not generate the expected failure.
 
 
 \begin{figure}
@@ -117,45 +138,4 @@ later steps (if the earlier step fails, there should be no way that a later one 
 run because of mutations (bugs) inserted in the app.
 }
 \end{figure}
-
-\subsection{MechanizeGrader}
-
-Surveys of recent
-autograders~\cite{ihantola-2010-autograding-survey,douce-2005-autograding-survey} mentioned as
-a ``future direction'' a grader that can assess full-stack or GUI apps.
-
-
-Capybara~\uf{jnicklas.github.io/capybara}
-provides a Ruby-embedded DSL for interacting with Web-based
-applications.
-One can trigger actions on a web page such as filling in form fields
-or clicking a button, and use XPath~\cite{xpath} to examine the
-response page delivered by the server.
-Capybara actions can either run in the same process as the app being
-tested, or when used in conjunction with the Mechanize
-library~\footnote{\url{https://rubygems.org/gems/mechanize}; based on
-  the older Perl library of the same name.}, can trigger these actions
-against a remote application, allowing black-box testing.
-
-
-
-Our MechanizeGrader achieves this by combining Capybara's embedded DSL
-for interacting with a Web application with the Mechanize HTTP library
-for interacting with and scraping a remote site.
-
-\tbd{SJ: explain brefly how it works and how it's configured, how tests
-  external app given just a URI, etc}
-
-\tbd{cite AWAT as another example of GUI grader}
-
-
-\begin{figure}
-  \input{figs/grader_summary}
-  \caption{\label{fig:grader_summary} Summary of the autograder
-    engines based on our repurposing of excellent existing open-source
-    tools and testing techniques.  Only the RSpecGrader is
-    Ruby-specific; the others are easily retargetable to other languages
-    and systems.}
-\end{figure}
-
 

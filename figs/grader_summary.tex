@@ -2,22 +2,22 @@
  \hline
  \textbf{Grader} & \textbf{Based on} & \textbf{Student Assignment Type} \\
  \hline
- RSpecGrader &
+ RSpec-Grader &
  unit testing &
  Student submits one or more class files; black-box and ``intrusive''
  unit tests against functions and groups of functions are performed
  \\
- FeatureGrader &
+ Mechanize-Grader & 
+ remmote integration testing &
+ Student deploys full-stack app to public cloud; ``black box'' tests
+ stimulate remote server and parse/analyze output, including execution
+ of JavaScript if needed
+ \\
+ Feature-Grader &
  simplified mutation testing &
  Student submits integration tests written using Cucumber; bugs inserted
  in reference app attempt to trigger test failures to check test suite
  completeness and test fragility
- \\
- MechanizeGrader & 
- staging-like integration testing &
- Student deploys full-stack app to public cloud; ``black box'' tests
- stimulate remote server and parse/analyze output, including execution
- of JavaScript if needed
  \\
  \hline
 \end{tabular}

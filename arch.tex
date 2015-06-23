@@ -1,15 +1,13 @@
 \section{Cloud Grading Architecture With OpenEdX}
 \label{sec:arch}
 
-
-
 We adopt a narrow Unix-like view of an autograder: it is a
 stateless command-line program that, given a student work submission and
 a rubric, computes a score and some textual feedback.  We treat
 separately the question of how to connect this program to an LMS.
 All other policy issues---whether students can resubmit homeworks, how
-late penalties are computes, where the gradebook is stored, any other
-LMS behaviors---are out of scope\footnote{Due to an implementation
+late penalties are computed, where the gradebook is stored, and so 
+on---are out of scope\footnote{Due to an implementation
   artifact of OpenEdX, the autograders currently do adjust their scores
   to reflect late penalties, based on metadata about due dates provided
   with each assignment submission.}, as is the question of whether these
@@ -54,7 +52,7 @@ their own work).
 \begin{figure}
   \centering
   \includegraphics[width=0.75\textwidth]{figs/autograder_arch.pdf}
-  \caption{\label{fig:arch}
+  \caption{\label{fig:autograder_arch}
   Since our autograders rely on many libraries,
   tools, support files, and so on, we encapsulate the autograder in a
   virtual machine image that is deployed on Amazon Elastic Compute Cloud.
@@ -64,15 +62,15 @@ their own work).
 \end{figure}
 
 
-Our initial implementation of \texttt{rag} was designed to work with
-Coursera and later transitioned to OpenEdX.  Both the API and student
+Our initial implementation of autograding was designed to work with
+Coursera and later transitioned to OpenEdX.  Both the API and the student
 experience are similar 
-between the two.  A logged-in learner navigates to a page
+between the two.  A logged-in student navigates to a page
 containing instructions and handouts for a homework assignment;
 when ready, the learner submits a single file or a
 \texttt{tar} or \texttt{zip} archive through a standard HTTP
 file-upload form.  A short time later, typically less than a minute, the
-learner can refresh the page to see feedback on her work from the
+student can refresh the page to see feedback on her work from the
 autograder.  
 
 As Figure~\ref{fig:autograder_arch} shows, 
@@ -100,10 +98,11 @@ student is leaked if the autograder is compromised.
 %% process sleeps for awhile and tries again.  (In the future we will allow
 %% idle autograders to kill themselves.)
 Once a submission is retrieved from the queue, the metadata identifies
-which grader engine and rubric files (described subsequently) should be
-used to grade the assignment.  Finally, a numerical score and freeform
-text feedback are posted back to the queue along with the token
-identifying the student.
+which grader engine and instructor-supplied rubric files (described
+subsequently) should be 
+used to grade the assignment.  Finally, a numerical score and 
+text feedback from the autograder 
+are posted back to OpenEdX.
 This simple architecture keeps the grader process stateless, thereby 
 simplifying the implementation of cloud-based graders:
 
@@ -216,15 +215,6 @@ Hollingsworth observed as early as 1960~\cite{hollingsworth60} that it
 is possible for students 
 to submit programs that deliberately or accidentally damage the autograder. 
 We use various layers of security to mitigate this possibility.
-For the RSpecGrader, the tests must be run in the same
-process as the student's code.  They are run in a separate interpreter
-thread that is protected by a timeout and in which large sections of the
-standard library such as file I/O and most system calls have been
-stubbed out.  The thread is protected by a timeout and the autograder
-itself is run as a child process also protected by a watchdog timer and
-inside of a \texttt{while(1)} loop to automatically recover from
-occasional crashes.  In the worst case, we can shut down the autograder
-VM instance without losing important state, as described previously.
  
 \tbd{SJ: FeatureGrader sandboxing}
 
