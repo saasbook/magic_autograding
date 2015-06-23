@@ -49,20 +49,7 @@ having students self-report grades computed by their own computers
 their own work).
 
 
-\subsection{Student Experience}
-
-Our initial implementation of \texttt{rag} was designed to work with
-Coursera, but both the interface and student experience are similar
-between Coursera and OpenEdX.  A logged-in learner navigates to a page
-containing instructions and handouts for a homework assignment;
-when ready, the learner submits a single file or a
-\texttt{tar} or \texttt{zip} archive through a standard HTTP
-file-upload form.  A short time later, typically less than a minute, the
-learner can refresh the page to see feedback on her work from the
-autograder.  Depending on the course policy, she may be able to improve
-her work and resubmit.
-
-\subsection{Interface Between Autograders and OpenEdX}
+\subsection{Student Experience and Cloud Grading Architecture}
 
 \begin{figure}
   \centering
@@ -76,19 +63,35 @@ her work and resubmit.
   to get obtain the credentials needed to make calls to the XQueues.}
 \end{figure}
 
-When an OpenEdX student uploads an assignment that is to be graded by an
-external grader, the student's submitted file, along with additional
-submission metadata specified at course authoring time, goes into a
+
+Our initial implementation of \texttt{rag} was designed to work with
+Coursera and later transitioned to OpenEdX.  Both the API and student
+experience are similar 
+between the two.  A logged-in learner navigates to a page
+containing instructions and handouts for a homework assignment;
+when ready, the learner submits a single file or a
+\texttt{tar} or \texttt{zip} archive through a standard HTTP
+file-upload form.  A short time later, typically less than a minute, the
+learner can refresh the page to see feedback on her work from the
+autograder.  
+
+As Figure~\ref{fig:autograder_arch} shows, 
+the student's submitted file, plus
+submission metadata specified at course authoring time, go into a
 persistent named queue; each course has its own queue.
 We use the submission metadata field to distinguish different
 assignments so that the autograder knows which engine and rubric files
 must be used to grade that assignment.
 The OpenEdX LMS defines a simple RESTful
-API~\uf{edx-partner-course-staff.readthedocs.org/en/latest/exercises\_tools/external\_graders.html}
+API\uf{edx-partner-course-staff.readthedocs.org/en/latest/exercises\_tools/external\_graders.html}
 by which external standalone autograders can retrieve student
 submissions from these queues and later post back a numerical grade and
 textual feedback.
-
+The external grader does not have access to the identity of the learner;
+instead, an obfuscated token identifies the learner, with the mappings
+to the learners' true identities maintained only on OpenEdX.
+Hence no sensitive information connecting a work product to a specific
+student is leaked if the autograder is compromised.
 %% Retrieving an
 %% assignment and posting back a 
 %% grade are separate queue operations, to allow for autograders that may
@@ -96,15 +99,24 @@ textual feedback.
 %% If the autograder polls the XQueue and finds it empty, the grader
 %% process sleeps for awhile and tries again.  (In the future we will allow
 %% idle autograders to kill themselves.)
-While simple, this architecture exposes several important properties
-that simplify the creation of such external graders.
-First, if an assignment is retrieved but no grade is posted back before
+Once a submission is retrieved from the queue, the metadata identifies
+which grader engine and rubric files (described subsequently) should be
+used to grade the assignment.  Finally, a numerical score and freeform
+text feedback are posted back to the queue along with the token
+identifying the student.
+This simple architecture keeps the grader process stateless, thereby 
+simplifying the implementation of cloud-based graders:
+
+\textbf{No data loss.}
+If an assignment is retrieved but no grade is posted back before
 a pre-set timeout, OpenEdX eventually returns the ungraded assignment to
 the queue, where it will presumably be picked up again by another
 autograder instance.
 Therefore, if an autograder crashes while grading an assignment, no
 student work is lost.
-Second, since the autograders themselves are stateless consumers
+
+\textbf{Scale-out.} 
+Since the autograders are stateless consumers
 contacting a single producer (the queue), and grading is
 embarrassingly task-parallel, we can drain the queues faster by simply
 deploying additional autograder instances.
@@ -125,18 +137,13 @@ autograding is cost-effective and fast: even with
 thousands of assignments being submitted in a 50,000-learner course,
 students rarely waited more than a few minutes to get feedback.
 
-If the external grader crashes, it can simply be restarted, which we in
-fact do in the body of a \texttt{while(true)} shell script.  If the
-entire VM becomes unresponsive, for example if it becomes corrupted by
-misbehaving student code, it can be rebooted or undeployed as
-needed. 
-
-The external grader does not have access to the identity of the learner;
-instead, an obfuscated token identifies the learner, with the mappings
-to the learners' true identities maintained only on OpenEdX.
-Hence no sensitive information connecting a work product to a specific
-student is leaked if the autograder is compromised.
-
+\textbf{Crash-only.}~\cite{candea:crash-only}
+If the external grader crashes (which it does periodically), it can
+simply be restarted, which we in fact do in the
+body of a \texttt{while(true)} shell script.
+If the entire VM becomes unresponsive, for example if it becomes
+corrupted by misbehaving student code, it can be rebooted or
+undeployed as needed, with no data loss.
 
 \subsection{CI Workflow for Autograders}
 
@@ -188,19 +195,14 @@ which students are actively submitting work.
 %% \end{figure}
 
 \begin{figure}
-  \begin{minipage}{0.5\textwidth}%
-    \lstinputlisting[tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/ci_feature.txt}%
-  \end{minipage}%
-  \begin{minipage}{0.5\textwidth}%
-    \lstinputlisting[basicstyle=\scriptsize\ttfamily]{figs/ci_stepdefs.rb}%
-  \end{minipage}
+  \centering
+  \lstinputlisting[tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/ci_feature.txt}%
   \caption{\label{fig:rag-ci}%
-  Left: Cucumber integration test that is run whenever the autograder or
+  Cucumber integration test that is run whenever the autograder or
   homework code is updated.  The scenarios verify that, at a minimum,
   the autograder reports a score of 100\% when run against the
   instructor's reference solution and a score of 0\% when run against
-  the empty ``code skeleton'' provided to students.  Right: Example
-  step definitions corresponding to a subset of these steps.
+  the empty ``code skeleton'' provided to students.  
 }
 \end{figure}
 
