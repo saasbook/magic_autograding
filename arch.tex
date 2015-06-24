@@ -76,8 +76,8 @@ autograder.
 As Figure~\ref{fig:autograder_arch} shows, 
 the student's submitted file, plus
 submission metadata specified at course authoring time, go into a
-persistent named queue in the OpenEdX server; each course has its own queue.
-We use the submission metadata field to distinguish different
+persistent queue in the OpenEdX server; each course has its own queue.
+We use the metadata field to distinguish different
 assignments so that the autograder knows which engine and rubric files
 must be used to grade that assignment.
 The OpenEdX LMS defines an authenticated RESTful
@@ -104,9 +104,9 @@ used to grade the assignment.  Finally, a numerical score and
 text feedback from the autograder 
 are posted back to OpenEdX.
 This simple architecture keeps the grader process stateless, thereby 
-simplifying the implementation of cloud-based graders:
+simplifying the implementation of cloud-based graders in three ways:
 
-\textbf{No data loss.}
+\noindent\textbf{1. No data loss.}
 If an assignment is retrieved but no grade is posted back before
 a pre-set timeout, OpenEdX eventually returns the ungraded assignment to
 the queue, where it will presumably be picked up again by another
@@ -114,7 +114,7 @@ autograder instance.
 Therefore, if an autograder crashes while grading an assignment, no
 student work is lost.
 
-\textbf{Scale-out.} 
+\noindent\textbf{2. Scale-out.} 
 Since the autograders are stateless consumers
 contacting a single producer (the queue), and grading is
 embarrassingly task-parallel, we can drain the queues faster by simply
@@ -136,13 +136,17 @@ autograding is cost-effective and fast: even with
 thousands of assignments being submitted in a 50,000-learner course,
 students rarely waited more than a few minutes to get feedback.
 
-\textbf{Crash-only.}~\cite{candea:crash-only}
+\noindent\textbf{3. Crash-only~\cite{candea:crash-only}.}
 If the external grader crashes (which it does periodically), it can
 simply be restarted, which we in fact do in the
 body of a \texttt{while(true)} shell script.
 If the entire VM becomes unresponsive, for example if it becomes
 corrupted by misbehaving student code, it can be rebooted or
 undeployed as needed, with no data loss.
+
+In short, the simple external grader architecture of OpenEdX provides a
+good separation 
+of concerns between the LMS and autograder authors.
 
 \subsection{CI Workflow for Autograders}
 

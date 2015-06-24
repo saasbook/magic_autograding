@@ -20,14 +20,14 @@ is actually a collection of three different autograding
 ``engines'' based on open-source testing
 tools, as Figure~\ref{fig:grader_summary} shows.  
 Each engine takes as input a student-submitted work
-product and one or more rubric files, and grades the work according to
-the rubric.  The contents of the rubric files depend on the type of
-engine used.\footnote{Currently the rubric files must be present in the
+product and one or more rubric files whose content depends on the grader
+engine\footnote{Currently the rubric files must be present in the
   local filesystem of the autograder VM, but refactoring is in progress
   to allow these files to be securely loaded on-demand from a remote
   host so that currently-running 
   autograder VMs do not have to be modified when an assignment is added
-  or changed.}
+  or changed.}, and grades the work according to
+the rubric.  
 The first of these is
 \textbf{RSpecGrader}, based on RSpec, an XUnit-like 
 TDD framework that exploits Ruby's
@@ -64,7 +64,7 @@ GUI applications.
 MechanizeGrader does this using Capybara and
 Mechanize\footnote{\url{jnicklas.github.io/capybara},
 \url{rubygems.org/gem/mechanize}}.
-Capybara provides a Ruby-embedded DSL for interacting with Web-based
+Capybara implements a Ruby-embedded DSL for interacting with Web-based
 applications by providing primitives that trigger actions on a web page
 such as filling in form fields or clicking a button, and examining the
 server's delivered results pages using XPath\uf{w3.org/TR/xpath20/}, as
