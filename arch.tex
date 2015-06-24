@@ -76,11 +76,11 @@ autograder.
 As Figure~\ref{fig:autograder_arch} shows, 
 the student's submitted file, plus
 submission metadata specified at course authoring time, go into a
-persistent named queue; each course has its own queue.
+persistent named queue in the OpenEdX server; each course has its own queue.
 We use the submission metadata field to distinguish different
 assignments so that the autograder knows which engine and rubric files
 must be used to grade that assignment.
-The OpenEdX LMS defines a simple RESTful
+The OpenEdX LMS defines an authenticated RESTful
 API\uf{edx-partner-course-staff.readthedocs.org/en/latest/exercises\_tools/external\_graders.html}
 by which external standalone autograders can retrieve student
 submissions from these queues and later post back a numerical grade and
@@ -146,17 +146,13 @@ undeployed as needed, with no data loss.
 
 \subsection{CI Workflow for Autograders}
 
-To ensure that changes to rubric files, homework assignments, or the
-autograder code itself don't break the autograders, 
-we set up continuous integration tasks using Travis-CI, which is integrated with
-GitHub and runs on submission of patches for acceptance (``pull request''
-in GitHub terminology), as well as other events. 
-%% Users develop on their
-%% own forks of a repository, then submit pull requests back to the main
-%% repository when finished. Even when not finished, pull requests to the
-%% main repo may draw attention that can keep the team informed or resolve
-%% issues. 
-In essence, when a pull request is made\footnote{A pull request is
+Since at any given time the autograders
+may be in use by the MOOC and several campus SPOCs, it is important to 
+avoid introducing breaking changes to rubric files, homework
+assignments, or the autograders themselves.
+We set up continuous
+integration tasks using Travis-CI, which is integrated with GitHub.
+When a pull request is made\footnote{A pull request is
   GitHub's term for the mechanism by which a developer requests that a
   set of changes 
   be merged into the production branch of a codebase.},  
@@ -169,18 +165,9 @@ Figure~\ref{fig:rag-ci} shows.
 %% These CI features run the autograders locally against
 %% inputs via the Open3 library in order to control output streams and
 %% return codes. 
-Each homework assignment repository also has a Cucumber scenario that
+Each homework assignment repository also has a CI task that
 automates the installation of the autograders and verifies their
 configuration. 
-%% which simplified the use of multiple repositories, especially for new
-%% users. 
-
-If the CI tests succeed, it is safe to merge the pull request into the
-production code and deploy it.  Since at any given time the autograders
-may be in use by the MOOC and several campus SPOCs,
-this CI process provides a valuable safeguard
-against accidentally introducing a breaking change to an autograder to
-which students are actively submitting work.
 
 %% \begin{figure}[!htbp]
 %%   \centering
@@ -199,7 +186,9 @@ which students are actively submitting work.
   \lstinputlisting[tabsize=1,language=Ruby,basicstyle=\scriptsize\ttfamily]{figs/ci_stepdefs.rb}%
   \caption{\label{fig:rag-ci}%
   Top: Cucumber integration test that is run whenever the autograder or
-  homework code is updated.  The scenarios verify that, at a minimum,
+  homework code is updated.  (Cucumber is described in the next
+  section.)
+  The scenarios verify that, at a minimum,
   the autograder reports a score of 100\% when run against the
   instructor's reference solution and a score of 0\% when run against
   the empty ``code skeleton'' provided to students.  
@@ -208,14 +197,3 @@ which students are actively submitting work.
 }
 \end{figure}
 
-
-\subsection{Robustness and Security}
-
-Hollingsworth observed as early as 1960~\cite{hollingsworth60} that it
-is possible for students 
-to submit programs that deliberately or accidentally damage the autograder. 
-We use various layers of security to mitigate this possibility.
- 
-\tbd{SJ: FeatureGrader sandboxing}
-
-\tbd{SJ: MechanizeGrader sandboxing}

@@ -1,4 +1,4 @@
-\section{Lessons and Challenges}
+\section{Lessons and Future Work}
 
 Both  surveys of autograders ask why existing autograders aren't reused more.
 We believe one reason is the configuration required for teachers to deploy them and
@@ -15,7 +15,7 @@ to be used entirely as a service by others, and a toolchain to create
 autogradable homeworks for use in conjunction with the ESaaS course
 materials. 
 
-In the rest of this section we discuss how we are addressing ongoing
+We now discuss how we are addressing ongoing
 challenges resulting from lessons learned in using these autograders for
 nearly three years.
 
@@ -25,27 +25,55 @@ correct implementations that don't match the rubric, and easy to forget
 ``preflight checks'' that may cause the grader process to give up (for
 example, checking that a function is defined in the appropriate class
 namespace before calling it, to avoid a ``method not found''
-exception).  In general we try to debug rubrics at classroom scale and
-then deploy the assignments to the MOOC, relying on the CI workflow to
-ensure we haven't broken the autograding of existing assignments.
-
-\textbf{Test suite quality.}  A general challenge in software
-engineering is assessing the quality of a test suite, which is separate
-from the concept of coverage.  If multiple tests are effectively
+exception).  Similarly, if tests are
 redundant---that is, if the same single line of code or few lines of
 code in a student submission causes all tests in a group to either pass
-or fail together---then student scoring is distorted.
+or fail together---then student scoring is distorted.  (This is the more
+general problem of test suite quality in software engineering.)
+In general we try to debug rubrics at classroom scale and
+then deploy the assignments to the MOOC, relying on the CI workflow to
+ensure we haven't broken the autograding of existing assignments.
 
 \textbf{Avoiding ``Autograder-Driven Development.''}
 Because feedback from the autograder is quick, students can get into the
 habit of relying on the autograder for debugging.  To some extent we
 have turned this into a benefit by showing students how to install RSpec
 on their own computers and run a subset of the same tests the
-instructors use, which (we hope) gets them into the habit of always
-testing as they code.
+instructors use, which is much faster and also gives them access to an
+interactive debugger.
 
 \textbf{Combining with manual grading.}  In a classroom setting (though
 usually not in a MOOC),i nstructors may want to
 spot-check students' code manually  in addition to having it
 autograded.  The current workflow makes it a  bit awkward to do this,
 though we do save a copy of every graded assignment.
+
+\textbf{Grading for style.}
+As Douce et al.\ observe~\cite{douce-2005-autograding-survey}, one flaw
+of many autograders is that ``A program\ldots{}may be correct in its
+operation yet pathological in its construction.''
+We have observed this problem firsthand and are developing
+``crowd-aware'' style-based
+autograders~\cite{autostyle,clustering-style} that take advantage of
+scale to give students feedback on style as well as correctness.  
+
+\textbf{Plagiarism.}
+Woit and Mason~\cite{woit2003} found that not only is cheating rampant
+(in their own 5-year study and supported by earlier studies), as
+demonstrated dramatically by students who got high marks on required
+programming assignments but failed the exact same questions when they
+appeared on exams, but also that students don't do optional exercises.
+Notwithstanding these findings---and we're sure plagiarism is occurring
+in both our MOOC and campus class---plagiarism detection has been a
+non-goal for us.  We use these assignments as formative rather than
+summative assessments, and we have the option of using
+MOSS\uf{theory.stanford.edu/\textasciitilde{}aiken/moss}.
+%% We do want to avoid students submitting the URI of a colleague's
+%% deployed app to the MechanizeGrader; we are planning to require
+%% that each student's app serve pages that include hidden HTML elements
+%% whose ID matches the student ID.  Since no way to tell when your app will be
+%% polled, hard to cheat.
+
+Others (cite) have instrumented every code checkin and/or instrumented the desktop IDE  such as Eclipse (cite); Cloud-based IDEs may allow deeper instrumentation (cite Cryolite).
+
+Octobear integration (trigger autograders from GitHub push)
