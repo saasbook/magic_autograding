@@ -59,16 +59,15 @@ Capybara is usually used as an in-process testing tool, but Mechanize
 can trigger Capybara's actions against a remote application, allowing
 black-box testing.
 Students' ``submission'' to MechanizeGrader is therefore the URL to their
-application deployed on the public 
-cloud.  (We use the free tier of Heroku for our assignments and
-projects.)
+application deployed on Heroku's public 
+cloud.
 
 Finally, one of our assignments requires students to write integration-level
 tests using Cucumber, which allows such tests to be formulated in
 stylized plain text, as Figure~\ref{fig:cucumber} shows.
 Our autograder for this
 style of assignment is inspired by mutation testing, a technique invented
-by George Amman and Jeff 
+by George Ammann and Jeff 
 Offutt~\cite{ammann-offutt-sw-testing} in which a
 testing tool pseudo-randomly mutates the program under test to ensure
 that some test fails as a result of these introduced errors.

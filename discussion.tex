@@ -39,8 +39,12 @@ ensure we haven't broken the autograding of existing assignments.
 \textbf{Avoiding ``Autograder-Driven Development.''}
 Because feedback from the autograder is quick, students can get into the
 habit of relying on the autograder for debugging.  To some extent we
-have turned this into a benefit by showing students how to install RSpec
-on their own computers and run a subset of the same tests the
+have turned this into a benefit by showing students how to use
+RSpec and Cucumber/Capybara 
+on their own computers\footnote{These and all the other tools are preinstalled in the virtual machine
+image in which we package all student-facing courseware, available for
+download from \url{saasbook.info}.}
+and run a subset of the same tests the
 instructors use, which is much faster and also gives them access to an
 interactive debugger.
 
@@ -55,15 +59,16 @@ As Douce et al.\ observe~\cite{douce-2005-autograding-survey}, one flaw
 of many autograders is that ``A program\ldots{}may be correct in its
 operation yet pathological in its construction.''
 We have observed this problem firsthand and are developing
-``crowd-aware'' style-based
+``crowd-aware'' 
 autograders that take advantage of
-scale to give students feedback on style as well as correctness, based
+scale to give students feedback on style as well as correctness.
+This work is based
 on two main ideas.
 The first is that a small number of clusters may capture the
-a majority of stylistic errors, and browsing these clusters could help 
+a majority of stylistic errors, and browsing these clusters can help 
 the instructor quickly grasp the main categories of stylistic problems students
 are experiencing~\cite{clustering-style}.  The second is that within a sufficiently large set of
-student submissions, we can see not only examples of excellent style and
+student submissions, we can observe not only examples of excellent style and
 examples of very poor style, but enough examples in between that we can
 usually identify a submission that is \emph{slightly} more stylistic
 than a given student's submission~\cite{autostyle}.  We can then use the differences
