@@ -6,7 +6,7 @@ Massive Open Online Courses (MOOCs), so-called ``autograders'' are
 receiving renewed attention.  The appeal is obvious: students not only
 get immediate feedback, but can now be given multiple opportunities to
 resubmit their code to improve on their mistakes, providing the
-opportunity for mastery learning.  Over their long history, autograders
+opportunity for mastery learning~\cite{bloom1971mastery}.  Over their long history, autograders
 have evolved from test-harness libraries that must be linked against
 student code to web-based systems that perform both dynamic tests and static
 analysis~\cite{douce-2005-autograding-survey}.  Autograders have also
@@ -29,31 +29,24 @@ feedback for instructors to check students' work.
 We chose Ruby on Rails as the teaching vehicle because its developer
 ecosystem has by far the richest set of such tools, with a much stronger
 emphasis on high productivity, refactoring, and beautiful code than any
-other ecosystem we'd seen.
+other ecosystem we'd seen, as Figure~\ref{fig:tools} summarizes.
 The choice of Rails in turn influenced our decision to use Software as a
 Service (SaaS) as the learning vehicle, rather than (for example) mobile
 or embedded apps.
-Among the tools we
-use\footnote{All are either open source downloads or offer a free
-hosted version sufficient for class projects.  Web
-sites: \texttt{rspec.info}, \texttt{github.com/colszowka/simplecov},
-\texttt{cukes.info}, \texttt{pivotaltracker.com},
-\texttt{travis-ci.org}, \texttt{codeclimate.com}, \texttt{heroku.com}, \texttt{github.com}.} 
-are 
-RSpec for unit testing,
-SimpleCov for C0 test coverage,
-Cucumber for behavior-driven design and integration testing,
-Pivotal Tracker for lightweight project management,
-Travis for continuous-integration testing,
-CodeClimate for code-quality metrics,
-Heroku for lightweight continuous deployment to the public cloud,
-and, of course, GitHub, with which all the
-other tools communicate.  
 In just 14 weeks, third- and fourth-year students learn Ruby
-and Rails (most haven't seen it before), learn the above tools, complete
+and Rails (which most haven't seen before), learn the tools in Figure~\ref{fig:tools}, complete
 five programming assignments, take three exams, and form ``two-pizza
 teams'' of 4--6 to prototype a real SaaS application for a nonprofit,
 NGO, or campus unit, over four two-week agile iterations.
+
+\begin{figure}
+  \input{figs/tools}
+  \caption{\label{fig:tools} The most important tools we use, all of
+    which are either open source downloads or offer a free
+hosted version sufficient for class projects.}
+\end{figure}
+
+
 
 The new course was offered experimentally in 2009--2010 and was
 immediately successful; growing enrollment demand (from 45 in the pilot

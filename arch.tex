@@ -4,10 +4,11 @@
 We adopt a narrow Unix-like view of an autograder: it is a
 stateless command-line program that, given a student work submission and
 a rubric, computes a score and some textual feedback.  We treat
-separately the question of how to connect this program to an LMS.
+separately the question of how to connect this program to a Learning
+Management System (LMS).
 All other policy issues---whether students can resubmit homeworks, how
 late penalties are computed, where the gradebook is stored, and so 
-on---are out of scope\footnote{Due to an implementation
+on---are independent of the autograder\footnote{Due to an implementation
   artifact of OpenEdX, the autograders currently do adjust their scores
   to reflect late penalties, based on metadata about due dates provided
   with each assignment submission.}, as is the question of whether these
@@ -51,7 +52,7 @@ their own work).
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.75\textwidth]{figs/autograder_arch.pdf}
+  \includegraphics[width=\textwidth]{figs/autograder_arch.pdf}
   \caption{\label{fig:autograder_arch}
   Since our autograders rely on many libraries,
   tools, support files, and so on, we encapsulate the autograder in a
@@ -134,9 +135,10 @@ machine-minute per assignment, so at less than 10 cents per machine-hour,
 MOOC-scale 
 autograding is cost-effective and fast: even with
 thousands of assignments being submitted in a 50,000-learner course,
-students rarely waited more than a few minutes to get feedback.
+students rarely waited more than a few minutes to get feedback, and we
+can grade over 1,000 assignments for US~\$1.
 
-\noindent\textbf{3. Crash-only~\cite{candea:crash-only}.}
+\noindent\textbf{3. Crash-only design~\cite{candea:crash-only}.}
 If the external grader crashes (which it does periodically), it can
 simply be restarted, which we in fact do in the
 body of a \texttt{while(true)} shell script.
@@ -151,7 +153,8 @@ of concerns between the LMS and autograder authors.
 \subsection{CI Workflow for Autograders}
 
 Since at any given time the autograders
-may be in use by the MOOC and several campus SPOCs, it is important to 
+may be in use by the MOOC and several campus SPOCs (Small Private Online
+Courses~\cite{spoc}), it is important to 
 avoid introducing breaking changes to rubric files, homework
 assignments, or the autograders themselves.
 We set up continuous

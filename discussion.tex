@@ -1,7 +1,11 @@
 \section{Lessons and Future Work}
 
-Both  surveys of autograders ask why existing autograders aren't reused more.
-We believe one reason is the configuration required for teachers to deploy them and
+Both  surveys of autograders ask why existing autograders aren't reused
+more, at least when the programming languages and types of assignments supported by the
+autograder match those used in courses other than the one(s) for which
+the autograder was designed.
+We believe one reason is the configuration required for teachers to
+deploy autograders and
 students to submit work to them.  Since we
 faced and surmounted this problem in deploying our ``autograders as a
 service'' with OpenEdX, we can make them easy for others to use.
@@ -52,10 +56,21 @@ of many autograders is that ``A program\ldots{}may be correct in its
 operation yet pathological in its construction.''
 We have observed this problem firsthand and are developing
 ``crowd-aware'' style-based
-autograders~\cite{autostyle,clustering-style} that take advantage of
-scale to give students feedback on style as well as correctness.  
+autograders that take advantage of
+scale to give students feedback on style as well as correctness, based
+on two main ideas.
+The first is that a small number of clusters may capture the
+a majority of stylistic errors, and browsing these clusters could help 
+the instructor quickly grasp the main categories of stylistic problems students
+are experiencing~\cite{clustering-style}.  The second is that within a sufficiently large set of
+student submissions, we can see not only examples of excellent style and
+examples of very poor style, but enough examples in between that we can
+usually identify a submission that is \emph{slightly} more stylistic
+than a given student's submission~\cite{autostyle}.  We can then use the differences
+between two submissions as the basis for giving a hint to the student
+whose submission is stylistically worse.
 
-\textbf{Plagiarism.}
+\textbf{Cheating.}
 Woit and Mason~\cite{woit2003} found that not only is cheating rampant
 (in their own 5-year study and supported by earlier studies), as
 demonstrated dramatically by students who got high marks on required
@@ -63,15 +78,20 @@ programming assignments but failed the exact same questions when they
 appeared on exams, but also that students don't do optional exercises.
 Notwithstanding these findings---and we're sure plagiarism is occurring
 in both our MOOC and campus class---plagiarism detection has been a
-non-goal for us.  We use these assignments as formative rather than
-summative assessments, and we have the option of using
+non-goal for us.
+We use these assignments as formative rather than summative assessments,
+and we have the option of using
 MOSS\uf{theory.stanford.edu/\textasciitilde{}aiken/moss}.
+That said, we continue to work on strengthening the autograders against
+common student attacks, such as trying to generate output that mimics
+what the autograder generates when outputting a score, with the goal of
+getting the synthetic output parsed as the definitive score.
+
 %% We do want to avoid students submitting the URI of a colleague's
 %% deployed app to the MechanizeGrader; we are planning to require
 %% that each student's app serve pages that include hidden HTML elements
 %% whose ID matches the student ID.  Since no way to tell when your app will be
 %% polled, hard to cheat.
 
-Others (cite) have instrumented every code checkin and/or instrumented the desktop IDE  such as Eclipse (cite); Cloud-based IDEs may allow deeper instrumentation (cite Cryolite).
+%% Others (cite) have instrumented every code checkin and/or instrumented the desktop IDE  such as Eclipse (cite); Cloud-based IDEs may allow deeper instrumentation (cite Cryolite).
 
-Octobear integration (trigger autograders from GitHub push)

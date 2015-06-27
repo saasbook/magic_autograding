@@ -7,6 +7,8 @@ using more detailed tests, and would be easier to repurpose than
 those built for other languages.
 
 \begin{figure}
+  \centering
+  \includegraphics[width=0.85\textwidth]{figs/rag.pdf}
   \input{figs/grader_summary}
   \caption{\label{fig:grader_summary} Summary of the autograder
     engines based on our repurposing of excellent existing open-source
@@ -15,48 +17,46 @@ those built for other languages.
     and systems.}
 \end{figure}
 
-\texttt{rag}\uf{github.com/saasbook/rag} 
-is actually a collection of three different autograding
-``engines'' based on open-source testing
-tools, as Figure~\ref{fig:grader_summary} shows.  
-Each engine takes as input a student-submitted work
-product and one or more rubric files whose content depends on the grader
-engine\footnote{Currently the rubric files must be present in the
-  local filesystem of the autograder VM, but refactoring is in progress
-  to allow these files to be securely loaded on-demand from a remote
-  host so that currently-running 
-  autograder VMs do not have to be modified when an assignment is added
-  or changed.}, and grades the work according to
-the rubric.  
-The first of these is
-\textbf{RSpecGrader}, based on RSpec, an XUnit-like 
-TDD framework that exploits Ruby's
-flexible syntax to embed a highly readable unit-testing DSL in Ruby.
+\texttt{rag}\uf{github.com/saasbook/rag} is actually a collection of
+three different autograding ``engines'' based on open-source testing
+tools, as Figure~\ref{fig:grader_summary} shows.
+Each engine takes as input a student-submitted work product and one or
+more rubric files whose content depends on the grader
+engine\footnote{Currently the rubric files must be present in the local
+filesystem of the autograder VM, but refactoring is in progress to
+allow these files to be securely loaded on-demand from a remote host
+so that currently-running autograder VMs do not have to be modified
+when an assignment is added or changed.}, and grades the work
+according to the rubric.
+The first of these (Figure~\ref{fig:grader_summary}, left) is
+\textbf{RSpecGrader}, based on RSpec, an XUnit-like TDD framework that
+exploits Ruby's flexible syntax to embed a highly readable unit-testing
+DSL in Ruby.
 The instructor annotates specific tests within an assignment with point
 values (out of 100 total); RSpecGrader computes the total points
 achieved and concatenates and formats the error/failure messages from
 any failed tests, as Figure~\ref{fig:rspec_grader_rubric} shows.
-RSpecGrader  runs RSpec in a separate timer-protected interpreter
-thread in which large sections of the
-standard library such as file I/O and most system calls have been
-stubbed out, allowing us to handle exceptions in RSpec itself as well
-as test failures.  
+RSpecGrader wraps the student code in a standard preamble and postamble
+in which large sections of the standard library such as file I/O and
+most system calls have been stubbed out, allowing us to handle
+exceptions in RSpec itself as well as test failures.
+RSpecGrader also runs in a separate timer-protected interpreter thread
+to protect against infinite loops and pathologically slow student code.
 
-\begin{figure}
-  \centering
-    \lstinputlisting[numbers=left,tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/rspec_grader_rubric.rb}
-  \caption{\label{fig:rspec_grader_rubric}
-    In an RSpecGrader rubric, some test cases are ``sanity checks''
-    without which the assignment isn't even graded
-    (lines 2--9) while others contribute points to the
-    student's score.  Ruby's dynamic language features allow us to
+\begin{figure} \centering
+  \lstinputlisting[numbers=left,tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/rspec_grader_rubric.rb}
+  \caption{\label{fig:rspec_grader_rubric} In an RSpecGrader rubric,
+    some test cases are ``sanity checks'' without which the assignment
+    isn't even graded (lines 2--9) while others contribute points to the
+    student's score.
+  Ruby's dynamic language features allow us to
     easily check, for example, that
 a student's implementation of a ``sum all the numbers'' method does not
 simply call a built-in library method (line 7).
   }
 \end{figure}
 
-A variant of RSpecGrader is \textbf{MechanizeGrader}.
+A variant of RSpecGrader is \textbf{MechanizeGrader}  (Figure~\ref{fig:grader_summary}, center).
 Surveys of recent
 autograders~\cite{ihantola-2010-autograding-survey,douce-2005-autograding-survey}
 mentioned as a ``future direction'' a grader that can assess full-stack
@@ -111,17 +111,18 @@ that some test fails as a result of these introduced errors.
 itself is polyglot.} 
 \end{figure}
 
-Specifically, \textbf{FeatureGrader} operates by working with an
-existing application to which student-created tests will be applied.   The application is modified so that the FeatureGrader
-can adjust the application's behavior by manipulating certain environment variables. Each  scenario 
-specified by the assignment is first tested against the working application.  Assuming the 
-students have created the correct acceptance tests in Cucumber, all these tests should pass.  
-
-Next the FeatureGrader starts to mutate the underlying application
-according to a simple specification (Figure~\ref{fig:featuregrader}), running the specified feature against
-the mutated application and checking that the specified scenarios do in fact fail.  Students 
-lose points according to the weights associated with features that do not generate the expected failure.
-
+Specifically, \textbf{FeatureGrader}  (Figure~\ref{fig:grader_summary},
+right)
+operates by working with an
+reference application designed so that its behavior can be modified by
+manipulating certain environment variables.
+Each student-created test   is first applied to the reference
+application to ensure it passes when run against a known-good subject.
+Next the FeatureGrader starts to mutate the reference application
+according to a simple specification (Figure~\ref{fig:featuregrader}), 
+introducing specific bugs and checking that some student-created test
+does in fact fail in the expected manner in the presence of the
+introduced bug.  
 
 \begin{figure}
   \begin{minipage}{0.45\textwidth}%
