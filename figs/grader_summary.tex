@@ -1,25 +1,25 @@
-\begin{tabular}{|p{0.15\textwidth}|p{0.15\textwidth}|p{0.7\textwidth}|}
+{\small
+\begin{tabular}{|p{0.13\textwidth}|p{0.25\textwidth}|p{0.6\textwidth}|}
  \hline
  \textbf{Grader} & \textbf{Based on} & \textbf{Student Assignment Type} \\
  \hline
- RSpec-Grader &
+ RSpec Grader &
  unit testing &
- Student submits one or more class files; black-box and ``intrusive''
- unit tests against functions and groups of functions are performed
+ Student submits one or more class files for black-box and glass-box
+ unit tests
  \\
 \hline
- Mechanize-Grader & 
- remmote integration testing &
- Student deploys full-stack app to public cloud; ``black box'' tests
- stimulate remote server and parse/analyze output, including execution
- of JavaScript if needed
+ Mechanize Grader & 
+ \raggedright remote integration testing &
+ Black-box tests stimulate student app deployed on public cloud
+ and parse/analyze output
  \\
 \hline
- Feature-Grader &
- simplified mutation testing &
- Student submits integration tests written using Cucumber; bugs inserted
- in reference app attempt to trigger test failures to check test suite
- completeness and test fragility
+ Feature Grader &
+ \raggedright simplified mutation testing &
+ Evaluates coverage and fragility of student-provided integration tests
+ by inserting bugs into reference app 
  \\
  \hline
 \end{tabular}
+}

@@ -1,0 +1,44 @@
+
+%%%% figures
+\clearpage
+\section*{Appendix: Code Examples}
+
+\begin{figure} \centering
+  \lstinputlisting[numbers=left,tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/rspec_grader_rubric.rb}
+  \caption{\label{fig:rspec_grader_rubric} In an RSpecGrader rubric,
+    some test cases are ``sanity checks'' without which the assignment
+    isn't even graded (lines 2--9) while others contribute points to the
+    student's score.
+  Ruby's dynamic language features allow us to
+    easily check, for example, that
+a student's implementation of a ``sum all the numbers'' method does not
+simply call a built-in library method (line 7).
+  }
+\end{figure}
+
+
+\begin{figure}
+ \centering
+  \lstinputlisting[language=Ruby,numbers=left]{figs/mechanize_grader_example.rb}
+  \caption{\label{fig:mechanize_grader_example} 
+This excerpt of three test cases from a MechanizeGrader rubric runs
+against a student's 
+deployed full-stack application.}
+\end{figure}
+
+\begin{figure}
+  \centering
+    \lstinputlisting{figs/cucumber_example.feature}
+    \lstinputlisting[language=Ruby]{figs/cucumber_step_def_example.rb}%
+  \caption{\label{fig:cucumber} Cucumber accepts integration tests 
+    written in stylized prose (top) and uses regular expressions to map each
+    step to a \emph{step definition} (bottom) that sets up preconditions, exercises the app,
+    or checks postconditions.  Step definitions 
+    can stimulate a full-stack GUI-based web application in various
+    ways, including remote-controlling a real browser with Webdriver
+    (formerly Selenium) or using the Ruby Mechanize library to interact
+    with a remote site.  Our code blocks are in Ruby, but the Cucumber framework
+itself is polyglot.} 
+\end{figure}
+
+ 

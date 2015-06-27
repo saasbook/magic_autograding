@@ -8,13 +8,12 @@ those built for other languages.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.85\textwidth]{figs/rag.pdf}
+  \includegraphics[width=0.7\textwidth]{figs/rag.pdf}
   \input{figs/grader_summary}
   \caption{\label{fig:grader_summary} Summary of the autograder
     engines based on our repurposing of excellent existing open-source
     tools and testing techniques.  Only the RSpecGrader is
-    Ruby-specific; the others are easily retargetable to other languages
-    and systems.}
+    Ruby-specific.}
 \end{figure}
 
 \texttt{rag}\uf{github.com/saasbook/rag} is actually a collection of
@@ -43,19 +42,6 @@ exceptions in RSpec itself as well as test failures.
 RSpecGrader also runs in a separate timer-protected interpreter thread
 to protect against infinite loops and pathologically slow student code.
 
-\begin{figure} \centering
-  \lstinputlisting[numbers=left,tabsize=1,basicstyle=\scriptsize\ttfamily]{figs/rspec_grader_rubric.rb}
-  \caption{\label{fig:rspec_grader_rubric} In an RSpecGrader rubric,
-    some test cases are ``sanity checks'' without which the assignment
-    isn't even graded (lines 2--9) while others contribute points to the
-    student's score.
-  Ruby's dynamic language features allow us to
-    easily check, for example, that
-a student's implementation of a ``sum all the numbers'' method does not
-simply call a built-in library method (line 7).
-  }
-\end{figure}
-
 A variant of RSpecGrader is \textbf{MechanizeGrader}  (Figure~\ref{fig:grader_summary}, center).
 Surveys of recent
 autograders~\cite{ihantola-2010-autograding-survey,douce-2005-autograding-survey}
@@ -77,15 +63,6 @@ application deployed on the public
 cloud.  (We use the free tier of Heroku for our assignments and
 projects.)
 
-\begin{figure}
- \centering
-  \lstinputlisting[language=Ruby,numbers=left]{figs/mechanize_grader_example.rb}
-  \caption{\label{fig:mechanize_grader_example} 
-This excerpt of three test cases from a MechanizeGrader rubric runs
-against a student's 
-deployed full-stack application.}
-\end{figure}
-
 Finally, one of our assignments requires students to write integration-level
 tests using Cucumber, which allows such tests to be formulated in
 stylized plain text, as Figure~\ref{fig:cucumber} shows.
@@ -96,33 +73,6 @@ Offutt~\cite{ammann-offutt-sw-testing} in which a
 testing tool pseudo-randomly mutates the program under test to ensure
 that some test fails as a result of these introduced errors.
 
-\begin{figure}
-  \centering
-    \lstinputlisting{figs/cucumber_example.feature}
-    \lstinputlisting[language=Ruby]{figs/cucumber_step_def_example.rb}%
-  \caption{\label{fig:cucumber} Cucumber accepts integration tests 
-    written in stylized prose (top) and uses regular expressions to map each
-    step to a \emph{step definition} (bottom) that sets up preconditions, exercises the app,
-    or checks postconditions.  Step definitions 
-    can stimulate a full-stack GUI-based web application in various
-    ways, including remote-controlling a real browser with Webdriver
-    (formerly Selenium) or using the Ruby Mechanize library to interact
-    with a remote site.  Our code blocks are in Ruby, but the Cucumber framework
-itself is polyglot.} 
-\end{figure}
-
-Specifically, \textbf{FeatureGrader}  (Figure~\ref{fig:grader_summary},
-right)
-operates by working with an
-reference application designed so that its behavior can be modified by
-manipulating certain environment variables.
-Each student-created test   is first applied to the reference
-application to ensure it passes when run against a known-good subject.
-Next the FeatureGrader starts to mutate the reference application
-according to a simple specification (Figure~\ref{fig:featuregrader}), 
-introducing specific bugs and checking that some student-created test
-does in fact fail in the expected manner in the presence of the
-introduced bug.  
 
 \begin{figure}
   \begin{minipage}{0.45\textwidth}%
@@ -140,3 +90,16 @@ run because of mutations (bugs) inserted in the app.
 }
 \end{figure}
 
+
+Specifically, \textbf{FeatureGrader}  (Figure~\ref{fig:grader_summary},
+right)
+operates by working with an
+reference application designed so that its behavior can be modified by
+manipulating certain environment variables.
+Each student-created test   is first applied to the reference
+application to ensure it passes when run against a known-good subject.
+Next the FeatureGrader starts to mutate the reference application
+according to a simple specification (Figure~\ref{fig:featuregrader}), 
+introducing specific bugs and checking that some student-created test
+does in fact fail in the expected manner in the presence of the
+introduced bug.  
