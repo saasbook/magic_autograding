@@ -1,0 +1,87 @@
+\section{Lessons}
+
+Our three years of experience with Massive Automated Grading in the
+Cloud have yielded the following lessons, which we hope others find
+useful.
+
+\textbf{The Unix design philosophy still holds.}
+
+A bedrock tenet of the Unix design
+philosophy~\cite{unix-programming-environment} is that a program should
+``do one thing and do it well.''  The autograder engine \emph{rag}\/ is
+essentially such a program: the job of interfacing with an LMS or other
+submission system is external to it.  Figure~\ref{fig:autograder_arch}
+shows the adapter for connecting it to OpenEdX's submission system, but
+we are working on another adapter to trigger autograding using GitHub
+service hooks, so that a student can have an assignment graded simply by
+pushing a properly-tagged commit to a designated GitHub account.
+
+In particular, we stand by our decision to exclude all pedagogy- and
+policy-related decisions from the autograder code (resubmission policy,
+late policy, and so on).  Given an autograder engine, different policy
+engines can be ``wrapped'' around it, but an autograder that embeds
+policy decisions may be difficult to repurpose with different policies.
+
+We also made no attempt to build towards a standard such as Learning
+Tools Operability (LTI).  In fairness, this was partially due to our own
+ignorance of LTI at the time work began; nonetheless, with the benefit
+of hindsight, we don't believe such standards represent a fundamental
+improvement over the ultimate simple ``standard'' of Unix command-line
+programs.  The latter can certainly be adapted to the former, but not
+necessarily conversely.
+
+\textbf{Great tools are important for both learners and autograders.}
+
+When we redesigned the course for which MAGIC was
+created~\cite{crossing_the_software_chasm}, we assumed that students
+would follow our advice regarding testing and code quality practices
+only if we provided them with the best possible tools to start
+``learning by doing'' immediately.
+We chose Rails as the teaching environment largely because of its
+superior tools; we did not then realize how these same tools would
+readily enabling autograding.
+If we had chosen an ecosystem lacking good testing tools, we would have
+had to essentially build them ourselves in order to construct an
+autograder, and that would have begged the question of why the tools
+weren't available for students in the first place.
+We believe the lesson here is that a good teaching vehicle should
+not only present pedagogical benefits to students, but also allow those
+benefits to be amplified when repurposed for instructor use (for
+autograding, e.g.).
+
+\textbf{Practice what we teach.}
+
+In accordance with good software engineering practice, we teach students
+to use regression testing and continuous integration (CI) to constantly
+monitor for possible defects as code evolves.  As instructors, we know
+that assignments and grading rubrics will always be imperfect and in
+need of revision, so we use CI to guard against introducing defects when
+such revisions are made.
+
+We also teach the value of architecting applications as components in a
+service-oriented architecture, in which all data communication is
+handled over externalizable (network-level) interfaces rather than via
+shared memory, a local filesystem, or some form of same-machine
+interprocess communication.
+A properly designed SOA with multiple components (such as MAGIC) can
+always be run on a single server, but a single-server solution
+cannot necessarily be deployed as SOA components that can be scaled
+separately.
+
+\textbf{Design for recovery from the start.}
+
+Two of the authors were involved many years ago in the Recovery-Oriented
+Computing (ROC) project.
+One major theme of that project was that software dependability could be
+improved not only by maximizing mean time to failure (MTTR), but also by
+minimizing mean time to recovery (MTTR).
+The project thus explored various techniques to minimize the cost and
+risk of recovery, including crash-only design.
+MAGIC's components adhere to this philosophy by being stateless and
+easily restartable, and any number of them can be deployed anywhere in
+the cloud, on any number of server instances.
+Indeed, one reason we don't collect and report numbers on peak surges is
+because it hasn't been a problem in practice, as evidenced by the
+general lack of student complaints about autograder latency.
+
+

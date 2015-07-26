@@ -4,31 +4,32 @@
 
 We describe our experience developing and using a specific category of
 cloud-based autograder (automatic evaluator of student programming
-assignments) for software engineering.  To
-establish our position in the landscape, our autograder is \emph{fully
-automatic} rather than assisting the instructor in performing manual grading,
-and \emph{test based}, in that 
-it exercises student code under controlled conditions rather than
-relying on static analysis or comparing only the output of student
-programs against reference output.  We include a brief description of
-the course for which 
-the autograders were built, \emph{Engineering Software as a Service},
-and the rationale for building them in the 
-first place, since we had to surmount some new obstacles related to the
-scale and delivery mechanism of the course.
+assignments) for software engineering.
+To establish our position in the landscape, our autograder is
+\emph{fully automatic} rather than assisting the instructor in
+performing manual grading, and \emph{test based}, in that it exercises
+student code under controlled conditions rather than relying on static
+analysis or comparing only the output of student programs against
+reference output.
+We include a brief description of the course for which the autograders
+were built, \emph{Engineering Software as a Service}, and the rationale
+for building them in the first place, since we had to surmount some new
+obstacles related to the scale and delivery mechanism of the course.
 In three years of using the autograders in conjunction with both a
 software engineering MOOC and the residential course on which the MOOC
 is based, they have reliably graded hundreds of thousands of student
 assignments, and are currently being refactored to make their code more
-easily extensible and maintainable.  We have found cloud-based
-autograding to be scalable,
-sandboxable, and reliable, and students value the near-instant feedback
-and opportunities to resubmit homework assignments more than once.
-Our open-source, cloud-based, producer-consumer
-autograder architecture allows custom autograders to be plugged in
-easily, and while it is currently compatible
-with the OpenEdX platform, it should be easy to plug into other Learning
-Management Systems.
+easily extensible and maintainable.
+We have found cloud-based autograding to be scalable, sandboxable, and
+reliable, and students value the near-instant feedback and opportunities
+to resubmit homework assignments more than once.
+Our autograder architecture and implementation are open source,
+cloud-based, LMS-agnostic, and easily extensible with new types of grading
+engines.
+Our goal is not to make specific research claims on behalf of our
+system, but to extract from our experience engineering lessons for
+others interested in building or adapting similar systems.
+
 
 
 \keywords{automatic grading, programming, software engineering,

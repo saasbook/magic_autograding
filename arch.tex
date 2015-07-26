@@ -13,6 +13,8 @@ on---are independent of the autograder\footnote{Due to an implementation
   to reflect late penalties, based on metadata about due dates provided
   with each assignment submission.}, as is the question of whether these
 autograders should replace or supplement manual grading by instructors.
+While these issues are pedagogically important, for engineering purposes
+we declare them strictly outside the scope of the autograder code itself.
 
 \subsection{Why Another Autograder?}
 
@@ -54,17 +56,17 @@ their own work).
   \centering
   \includegraphics[width=\textwidth]{figs/autograder_arch.pdf}
   \caption{\label{fig:autograder_arch}
-  Since our autograders rely on many libraries,
-  tools, support files, and so on, we encapsulate the autograder in a
+  Since MAGIC relies on many libraries,
+  tools, support files, and so on, we encapsulate it in a
   virtual machine image that is deployed on Amazon Elastic Compute Cloud.
   When a new instance is started, the autograder script automatically runs from
   \texttt{/etc/init.d} and examines a deploy-time environment variable
-  to get obtain the credentials needed to make calls to the XQueues.}
+  to obtain the credentials needed to make calls to the XQueues.}
 \end{figure}
 
 
 Our initial implementation of autograding was designed to work with
-Coursera and later transitioned to OpenEdX.  Both the API and the student
+Coursera and later adapted to OpenEdX.  Both the API and the student
 experience are similar 
 between the two.  A logged-in student navigates to a page
 containing instructions and handouts for a homework assignment;
@@ -101,9 +103,15 @@ student is leaked if the autograder is compromised.
 Once a submission is retrieved from the queue, the metadata identifies
 which grader engine and instructor-supplied rubric files (described
 subsequently) should be 
-used to grade the assignment.  Finally, a numerical score and 
-text feedback from the autograder 
-are posted back to OpenEdX.
+used to grade the assignment.  
+The engine itself, \emph{rag}\/ (Ruby AutoGrader), is essentially a Unix
+command-line program that consumes the submission filename and rubric
+filename(s) as command-line arguments and produces a numerical score
+(normalized to 100 points) and freeform text feedback.  The XQueueAdapter
+in the figure is a wrapper around this program that retrieves the
+submission from OpenEdX and posts the numerical score and feedback
+(formatted as a JSON object) back to OpenEdX.
+
 This simple architecture keeps the grader process stateless, thereby 
 simplifying the implementation of cloud-based graders in three ways:
 
